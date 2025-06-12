@@ -37,7 +37,6 @@ const projectDetails: Record<string, any> = {
         thumbnail: '/projects-img/zasedacka/zasedacka-1.png',
         description: 'Náhledová public page s přehledem aktuální a nadcházející akce.',
       },
-      
     ],
   },
   5: {
@@ -51,7 +50,6 @@ const projectDetails: Record<string, any> = {
         thumbnail: '/projects-img/recepty/recepty-1.png',
         description: 'Titulní strana s vyhledáváním receptu dle klíčových slov nebo kategorií',
       },
-     
     ],
   },
 };
@@ -59,6 +57,8 @@ const projectDetails: Record<string, any> = {
 export default function ProjectDetailPage() {
   const { id } = useParams();
   const project = projectDetails[id as string];
+
+ 
 
   return (
     <div className="mx-auto p-4 pt-[100px] flex flex-col items-center justify-start min-h-screen w-full bg-[#0a192f] text-gray-300">
@@ -91,7 +91,7 @@ export default function ProjectDetailPage() {
               </a>
               {project.source && (
                 <a href={project.source} target="_blank" rel="noopener noreferrer">
-                  <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Zdroj</button>
+                  <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Repo</button>
                 </a>
               )}
             </div>
