@@ -1,6 +1,3 @@
-// src/app/work/[id]/page.tsx
-
-export const dynamic = 'force-dynamic';
 'use client';
 
 import { useParams } from 'next/navigation';
