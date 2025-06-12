@@ -1,4 +1,6 @@
 // src/app/work/[id]/page.tsx
+
+export const dynamic = 'force-dynamic';
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -57,8 +59,6 @@ const projectDetails: Record<string, any> = {
 export default function ProjectDetailPage() {
   const { id } = useParams();
   const project = projectDetails[id as string];
-
- 
 
   return (
     <div className="mx-auto p-4 pt-[100px] flex flex-col items-center justify-start min-h-screen w-full bg-[#0a192f] text-gray-300">
