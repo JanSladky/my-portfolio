@@ -5,7 +5,7 @@ import Navbar from './Navbar';
 
 export default function NavbarWrapper() {
   const [nav, setNav] = useState(false);
-
+  // Funkce pro vypínání a zapínání hamburger menu
   const handleClick = () => setNav(!nav);
 
   useEffect(() => {
