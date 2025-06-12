@@ -12,25 +12,25 @@ const projectDetails: Record<string, any> = {
     title: 'Webové stránky pro kosmetické studio',
     description: 'Tento projekt zahrnoval vytvoření moderního webu pro kosmetické studio.',
     demo: 'https://www.kosmetikapohanka.cz',
-    gitlab: 'https://github.com/JanSladky/kosmetika-pohanka-next',
+    source: 'https://github.com/JanSladky/kosmetika-pohanka-next',
   },
   2: {
     title: 'Webové stránky pro videojinak',
     description: 'Projekt pro videojinak zahrnoval tvorbu webových stránek zaměřených na prezentaci natočených videí pro firmy, svatební páry a tak dále',
     demo: 'https://www.videojinak.cz',
-    gitlab: 'https://github.com/JanSladky/videojinak-web',
+    source: 'https://github.com/JanSladky/videojinak-web',
   },
   3: {
     title: 'Aplikace pro rozdělení hráčů do skupin',
     description: 'Aplikace umí vytvořit hráče, označit je a náhodně rozdělit do skupin.',
     demo: 'https://www.jansladky.eu/randomator',
-    gitlab: 'https://gitlab.com/sladky.honza/my-portfolio-website',
+    source: 'https://gitlab.com/sladky.honza/my-portfolio-website',
   },
   4: {
     title: 'Aplikace pro plánování zasedací místnosti',
     description: 'Zobrazuje události v zasedací místnosti a umožňuje správu v adminu.',
     demo: 'https://zasedacka-display-demo.vercel.app/',
-    gitlab: 'https://gitlab.com/sladky.honza/zasedacka-display/-/tree/demo?ref_type=heads',
+    source: 'https://gitlab.com/sladky.honza/zasedacka-display/-/tree/demo?ref_type=heads',
     images: [
       {
         original: '/projects-img/zasedacka/zasedacka-1.png',
@@ -44,7 +44,7 @@ const projectDetails: Record<string, any> = {
     title: 'Aplikace na recepty',
     description: 'Aplikace pro správu receptů a výpočet kalorií. Frontend v Next.js, backend v Node.js.',
     demo: 'https://recepty-app.vercel.app/',
-    gitlab: 'https://github.com/JanSladky/recepty_app',
+    source: 'https://github.com/JanSladky/recepty_app',
     images: [
       {
         original: '/projects-img/recepty/recepty-1.png',
@@ -89,8 +89,8 @@ export default function ProjectDetailPage() {
               <a href={project.demo} target="_blank" rel="noopener noreferrer">
                 <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Demo</button>
               </a>
-              {project.gitlab && (
-                <a href={project.gitlab} target="_blank" rel="noopener noreferrer">
+              {project.source && (
+                <a href={project.source} target="_blank" rel="noopener noreferrer">
                   <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Zdroj</button>
                 </a>
               )}
