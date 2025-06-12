@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
+//Project details
 const projectDetails: Record<string, any> = {
   1: {
     title: 'Webové stránky pro kosmetické studio',
