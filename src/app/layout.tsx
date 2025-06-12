@@ -19,6 +19,7 @@ export const metadata = {
     'přístupný web',
     'web pro firmy',
     'web pro živnostníky',
+    'Webová vizitka',
   ],
   authors: [{ name: 'Jan Sladký', url: 'https://www.jansladky.eu' }],
   creator: 'Jan Sladký',

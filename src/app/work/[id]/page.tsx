@@ -16,7 +16,7 @@ const projectDetails: Record<string, any> = {
   },
   2: {
     title: 'Webové stránky pro videojinak',
-    description: 'Projekt pro videojinak zahrnoval tvorbu webových stránek zaměřených na vzdělávací obsah.',
+    description: 'Projekt pro videojinak zahrnoval tvorbu webových stránek zaměřených na prezentaci natočených videí pro firmy, svatební páry a tak dále',
     demo: 'https://www.videojinak.cz',
     gitlab: 'https://github.com/JanSladky/videojinak-web',
   },
@@ -37,7 +37,7 @@ const projectDetails: Record<string, any> = {
         thumbnail: '/projects-img/zasedacka/zasedacka-1.png',
         description: 'Náhledová public page s přehledem aktuální a nadcházející akce.',
       },
-      // další obrázky...
+      
     ],
   },
   5: {
@@ -51,7 +51,7 @@ const projectDetails: Record<string, any> = {
         thumbnail: '/projects-img/recepty/recepty-1.png',
         description: 'Titulní strana s vyhledáváním receptu dle klíčových slov nebo kategorií',
       },
-      // další obrázky...
+     
     ],
   },
 };
@@ -91,7 +91,7 @@ export default function ProjectDetailPage() {
               </a>
               {project.gitlab && (
                 <a href={project.gitlab} target="_blank" rel="noopener noreferrer">
-                  <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Gitlab</button>
+                  <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Zdroj</button>
                 </a>
               )}
             </div>
