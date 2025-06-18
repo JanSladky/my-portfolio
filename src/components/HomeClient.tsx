@@ -197,7 +197,7 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
                 text: 'Předám zákazníkovi, projdeme finální podobu a případně zapracujeme finální požadavky',
               },
             ].map(({ icon, title, text }, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform hover:scale-105 p-6 text-center">
+              <div key={index} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform hover:scale-105 p-6 text-left">
                 <div className="text-blue-500 text-3xl mx-auto mb-4">{icon}</div>
                 <h3 className="text-lg font-semibold text-blue-600 mb-2">{title}</h3>
                 <p className="text-gray-800 text-sm leading-relaxed">{text}</p>
