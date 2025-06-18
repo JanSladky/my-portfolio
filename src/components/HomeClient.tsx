@@ -56,7 +56,7 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}>
         <div className="max-w-6xl mx-auto px-6 text-left">
-          <p className="text-blue-500 font-medium text-sm mb-2">{pageData.acf.home_intro || 'Ahoj, jmenuji se'}</p>
+          <p className="text-blue-500 font-medium text-md mb-2">{pageData.acf.home_intro || 'Ahoj, jmenuji se'}</p>
           <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 mb-3">{pageData.acf.home_name || 'Honza'}</h1>
           <h2 className="text-2xl md:text-4xl font-semibold text-slate-700 mb-6">{pageData.acf.home_subtitle || 'Frontend developer, který tvoří přístupné weby'}</h2>
           <p className="text-slate-500 max-w-2xl mb-8 leading-relaxed">{pageData.acf.home_description || 'Specializuji se na prezentační weby…'}</p>
@@ -74,7 +74,7 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
         </div>
       </motion.div>
 
-      <section id="cards" className="bg-[#f4f7fc] pt-20 px-4 pb-60 relative">
+      <section id="cards" className="bg-[#f4f7fc] pt-20 px-4 pb-60 relative scroll-mt-32">
         <h2 className="text-2xl md:text-4xl font-bold flex text-gray-800 justify-center mb-8">Proč web ode mně?</h2>
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
@@ -101,12 +101,20 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
             </div>
           ))}
         </div>
+        <button
+          onClick={() => {
+            const section = document.getElementById('sluzby');
+            section?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-32 flex mx-auto">
+          Služby které nabízím
+        </button>
         <div className="absolute bottom-0 left-0 w-full z-10">
           <SectionWave color="#e3edf9" variant="angle" />
         </div>
       </section>
 
-      <section className="relative bg-[#e3edf9] pt-20 pb-60" id="sluzby">
+      <section className="relative bg-[#e3edf9] pt-20 pb-60 scroll-mt-32" id="sluzby">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-16">Co mohu nabídnout</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
@@ -145,6 +153,14 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
             ))}
           </div>
         </div>
+         <button
+          onClick={() => {
+            const section = document.getElementById('spoluprace');
+            section?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-32 flex mx-auto">
+          Spolupráce
+        </button>
         <div className="absolute bottom-0 left-0 w-full z-10">
           <SectionWave color="#f4f7fc" variant="angle" />
         </div>
@@ -188,6 +204,9 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
               </div>
             ))}
           </div>
+          <Link className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-32 inline-flex mx-auto" href="/work">
+            Reference
+          </Link>
         </div>
       </section>
     </div>
