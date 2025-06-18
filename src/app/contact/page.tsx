@@ -2,7 +2,7 @@
 
 import { useState, useRef, FormEvent, ChangeEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import SocialSidebar from '../../components/SocialSideBar';
+import SocialSidebar from '../../components/SocialSidebar';
 
 export default function ContactForm() {
   const [activeTab, setActiveTab] = useState<'client' | 'company'>('client');
