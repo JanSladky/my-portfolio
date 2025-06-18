@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
-//Project details
+// Project details
 const projectDetails: Record<string, any> = {
   1: {
     title: 'Webové stránky pro kosmetické studio',
@@ -59,48 +59,75 @@ export default function ProjectDetailPage() {
   const project = projectDetails[id as string];
 
   return (
-    <div className="mx-auto p-4 pt-[100px] flex flex-col items-center justify-start min-h-screen w-full bg-[#0a192f] text-gray-300">
-      <motion.div className="flex max-w-[1000px] w-full flex-col justify-start" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7 }}>
+    <div className="min-h-screen w-full pt-[120px] pb-20 bg-[#e9f0fb] text-[#1f2937] font-sans antialiased">
+      <motion.div
+        className="max-w-4xl mx-auto px-6"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         {project ? (
           <>
-            <h1 className="text-3xl font-bold mb-4 text-gray-300">{project.title}</h1>
-            <p className="text-gray-400 mb-6">{project.description}</p>
+            <div className="bg-white p-8 rounded-xl shadow-md mb-10">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">{project.title}</h1>
+              <p className="text-slate-600 leading-relaxed">{project.description}</p>
+            </div>
 
             {project.images && (
-              <div className="mt-4 mb-10 max-w-3xl w-full mx-auto">
+              <div className="mb-12">
                 <ImageGallery
                   items={project.images}
                   showPlayButton={false}
                   showFullscreenButton={true}
                   showThumbnails={true}
                   renderItem={(item) => (
-                    <div className="image-gallery-image flex flex-col items-center bg-[#0a192f]">
-                      <img src={item.original} alt={item.description || 'Ukázka projektu'} className="object-contain max-h-[90vh] w-auto mx-auto bg-[#0a192f]" />
-                      {item.description && <div className="absolute bottom-0 left-0 text-sm text-white bg-black bg-opacity-60 p-2 w-full text-center mt-2">{item.description}</div>}
+                    <div className="image-gallery-image flex flex-col items-center bg-[#e9f0fb] rounded-xl shadow overflow-hidden">
+                      <img
+                        src={item.original}
+                        alt={item.description || 'Ukázka projektu'}
+                        className="object-contain max-h-[75vh] w-full rounded"
+                      />
+                      {item.description && (
+                        <div className="text-sm text-gray-700 bg-white bg-opacity-80 px-4 py-2 w-full text-center">
+                          {item.description}
+                        </div>
+                      )}
                     </div>
                   )}
                 />
               </div>
             )}
 
-            <div className="pt-6 flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <a href={project.demo} target="_blank" rel="noopener noreferrer">
-                <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Demo</button>
+                <button className="bg-blue-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-blue-200 transition">
+                  Zobrazit demo
+                </button>
               </a>
               {project.source && (
                 <a href={project.source} target="_blank" rel="noopener noreferrer">
-                  <button className="rounded-lg px-6 py-3 bg-white text-gray-700 font-bold text-lg">Repo</button>
+                  <button className="bg-blue-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-blue-200 transition">
+                    Repozitář
+                  </button>
                 </a>
               )}
+              <Link href="/work">
+                <button className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition">
+                  Zpět na projekty
+                </button>
+              </Link>
             </div>
           </>
         ) : (
-          <h1 className="text-3xl font-bold text-red-500">Projekt nenalezen</h1>
+          <div className="text-center py-20">
+            <h1 className="text-3xl font-bold text-red-500">Projekt nenalezen</h1>
+            <Link href="/work">
+              <button className="mt-6 bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition">
+                Zpět na projekty
+              </button>
+            </Link>
+          </div>
         )}
-
-        <Link href="/work" className="mt-8">
-          <button className="rounded-lg px-6 py-3 bg-pink-600 text-white font-bold text-lg">Zpět na projekty</button>
-        </Link>
       </motion.div>
     </div>
   );

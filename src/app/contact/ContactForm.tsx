@@ -3,6 +3,7 @@
 import { useState, useRef, FormEvent, ChangeEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
+
 export default function ContactForm() {
   const [activeTab, setActiveTab] = useState<'client' | 'company'>('client');
   const [formClient, setFormClient] = useState({
@@ -42,10 +43,7 @@ export default function ContactForm() {
 
     setStatus('⏳ Odesílám...');
 
-    const payload =
-      activeTab === 'client'
-        ? { ...formClient, recaptchaToken, type: 'client' }
-        : { ...formCompany, recaptchaToken, type: 'company' };
+    const payload = activeTab === 'client' ? { ...formClient, recaptchaToken, type: 'client' } : { ...formCompany, recaptchaToken, type: 'company' };
 
     try {
       const res = await fetch('/api/contact', {
@@ -72,21 +70,12 @@ export default function ContactForm() {
   return (
     <>
       {/* Záložky */}
+      
       <div className="flex mb-6 space-x-2">
-        <button
-          onClick={() => setActiveTab('client')}
-          className={`px-4 py-2 rounded-md font-semibold ${
-            activeTab === 'client' ? 'bg-pink-600 text-white' : 'bg-[#112240] text-[#8892b0]'
-          }`}
-        >
+        <button onClick={() => setActiveTab('client')} className={`px-4 py-2 rounded-md font-semibold ${activeTab === 'client' ? 'bg-pink-600 text-white' : 'bg-[#112240] text-[#8892b0]'}`}>
           Poptávka na web
         </button>
-        <button
-          onClick={() => setActiveTab('company')}
-          className={`px-4 py-2 rounded-md font-semibold ${
-            activeTab === 'company' ? 'bg-pink-600 text-white' : 'bg-[#112240] text-[#8892b0]'
-          }`}
-        >
+        <button onClick={() => setActiveTab('company')} className={`px-4 py-2 rounded-md font-semibold ${activeTab === 'company' ? 'bg-pink-600 text-white' : 'bg-[#112240] text-[#8892b0]'}`}>
           Spolupráce / Nabídka práce
         </button>
       </div>
@@ -130,15 +119,7 @@ export default function ContactForm() {
                 'Vícestránkový web s redakčním systémem',
               ].map((option) => (
                 <label key={option} className="block text-[#8892b0] mt-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="website_type"
-                    value={option}
-                    checked={formClient.website_type === option}
-                    onChange={handleChange}
-                    className="mr-2 accent-pink-600"
-                    required
-                  />
+                  <input type="radio" name="website_type" value={option} checked={formClient.website_type === option} onChange={handleChange} className="mr-2 accent-pink-600" required />
                   {option}
                 </label>
               ))}
@@ -206,16 +187,9 @@ export default function ContactForm() {
           </>
         )}
 
-        <ReCAPTCHA
-          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-          onChange={(token) => setRecaptchaToken(token)}
-          ref={recaptchaRef}
-        />
+        <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!} onChange={(token) => setRecaptchaToken(token)} ref={recaptchaRef} />
 
-        <button
-          type="submit"
-          className="bg-pink-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-pink-700 transition"
-        >
+        <button type="submit" className="bg-pink-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-pink-700 transition">
           Odeslat
         </button>
 

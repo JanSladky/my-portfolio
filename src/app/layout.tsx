@@ -1,11 +1,12 @@
 /* src/app/layout.tsx */
 import '../styles/globals.css';
 import NavbarWrapper from '../components/NavbarWrapper';
-
+import Head from 'next/head';
 
 export const metadata = {
   title: 'Jan Sladký – Tvorba webů na míru, SEO optimalizace a moderní design',
-  description: 'Jsem webový vývojář specializující se na tvorbu rychlých, moderních a responzivních webových stránek. Nabízím SEO optimalizaci, přístupný design a individuální přístup pro živnostníky, firmy i neziskové projekty.',
+  description:
+    'Jsem webový vývojář specializující se na tvorbu rychlých, moderních a responzivních webových stránek. Nabízím SEO optimalizaci, přístupný design a individuální přístup pro živnostníky, firmy i neziskové projekty.',
   keywords: [
     'tvorba webových stránek',
     'weby na míru',
@@ -31,7 +32,7 @@ export const metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
-  metadataBase: new URL('https://www.jansladky.eu'), 
+  metadataBase: new URL('https://www.jansladky.eu'),
   openGraph: {
     title: 'Jan Sladký – Vývoj moderních webových stránek',
     description: 'Moderní, rychlé a optimalizované weby – od designu po nasazení. Přehledná řešení pro malé podnikatele i firmy.',
@@ -51,7 +52,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="cs">
-      <body className="bg-[#0a192f] text-gray-300 min-h-screen">
+      <Head>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      <body className="antialiased font-sans text-gray-300 min-h-screen">
         <NavbarWrapper />
         <div className="app-container">{children}</div>
       </body>

@@ -8,12 +8,12 @@
 @layer base {
   html,
   body {
-    @apply font-[Raleway] bg-[#0a192f] text-gray-300 min-h-screen;
+    @apply text-gray-300 min-h-screen;
   }
   html,
   body {
     font-family: 'Raleway', sans-serif;
-    background-color: #0a192f;
+    background-color: #e9f0fb;
     min-height: 100vh;
     overflow-x: hidden; /* ❗ Zabraní horizontálnímu skrolování */
     overflow-y: auto; /* Místo 'scroll' použij 'auto', aby scrollbar nebyl vidět, když není potřeba */
