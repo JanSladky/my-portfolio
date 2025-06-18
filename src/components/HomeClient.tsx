@@ -166,7 +166,7 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
         </div>
       </section>
 
-      <section className="bg-[#f4f7fc] pt-20 pb-20 relative" id="spoluprace">
+      <section className="bg-[#f4f7fc] pt-20 pb-20 relative scroll-mt-32" id="spoluprace">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-16">Jak probíhá spolupráce</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
