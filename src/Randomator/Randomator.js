@@ -129,16 +129,23 @@ const Randomator = () => {
         <div className="w-full grid md:grid-cols-3 gap-6 mt-10">
           {/* Nepřiřazení hráči */}
           <div className="bg-green-100 border border-green-400 rounded-lg p-4 shadow">
-            <h2 className="text-lg font-bold text-green-800 mb-2">Nepřiřazení hráči</h2>
+            <h2 className="text-lg font-bold text-green-800 mb-4">Nepřiřazení hráči</h2>
+
             {ungroupedUsers.map((user) => (
-              <div key={user.id} className={`flex items-center justify-between p-2 rounded hover:bg-green-200 ${selectedUsers.includes(user.id) ? 'bg-gray-300' : ''}`}>
-                <label className="flex items-center cursor-pointer">
-                  <input type="checkbox" checked={selectedUsers.includes(user.id)} onChange={() => selectUser(user.id)} className="mr-2" />
-                  <span>{user.nickname}</span>
-                </label>
-                <div className="flex gap-2 ml-4">
+              <div
+                key={user.id}
+                className={`flex items-center justify-between p-3 rounded-lg transition ${selectedUsers.includes(user.id) ? 'bg-gray-200' : 'hover:bg-green-200'} mb-2`}
+                onClick={() => selectUser(user.id)} // Klik na celou oblast = výběr
+              >
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" checked={selectedUsers.includes(user.id)} readOnly className="w-5 h-5 cursor-pointer" />
+                  <span className="text-sm font-medium text-gray-800">{user.nickname}</span>
+                </div>
+
+                <div className="flex gap-2 z-10">
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation(); // zabrání toggle výběru při kliknutí na ikonu
                       const newName = prompt('Zadej nové jméno hráče:', user.nickname);
                       if (newName && newName.trim() !== '') renameUser(user.id, newName.trim());
                     }}
@@ -147,7 +154,8 @@ const Randomator = () => {
                     ✏️
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       if (window.confirm('Opravdu chceš smazat tohoto hráče?')) handleDeleteUser(user.id);
                     }}
                     className="text-red-500 hover:text-red-700 text-sm"
