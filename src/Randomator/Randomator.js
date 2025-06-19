@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { addUserToRandomatorFirebase, saveGroupsToRandomatorFirebase, deleteUserFromFirebase, subscribeToUsers, getGroupsFromRandomatorFirebase } from '../../firebase';
+import {
+  addUserToRandomatorFirebase,
+  saveGroupsToRandomatorFirebase,
+  deleteUserFromFirebase,
+  subscribeToUsers,
+  getGroupsFromRandomatorFirebase,
+} from '../../firebase';
 
 import UserInput from './UserInput';
 import GroupDisplay from './GroupDisplay';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const Randomator = () => {
   const [users, setUsers] = useState([]);
@@ -41,7 +46,9 @@ const Randomator = () => {
   };
 
   const selectUser = (id) => {
-    setSelectedUsers((prev) => (prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]));
+    setSelectedUsers((prev) =>
+      prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
+    );
   };
 
   const divideIntoGroups = async () => {
@@ -58,7 +65,6 @@ const Randomator = () => {
     }
 
     const shuffled = [...selected].sort(() => 0.5 - Math.random());
-
     const newGroups = [];
     let groupId = 1;
     const total = shuffled.length;
@@ -75,10 +81,7 @@ const Randomator = () => {
           .filter((u) => u && u.id !== undefined)
           .map((u) => ({ id: u.id }));
 
-        newGroups.push({
-          groupId: groupId++,
-          users: groupUsers,
-        });
+        newGroups.push({ groupId: groupId++, users: groupUsers });
       }
     }
 
@@ -100,7 +103,9 @@ const Randomator = () => {
       .filter((group) => group.groupId !== groupId)
       .map((group) => {
         const validGroupId = group.groupId !== undefined ? group.groupId : Date.now();
-        const validUsers = Array.isArray(group.users) ? group.users.filter((u) => u && typeof u.id === 'string' && u.id.trim() !== '').map((u) => ({ id: u.id })) : [];
+        const validUsers = Array.isArray(group.users)
+          ? group.users.filter((u) => u && typeof u.id === 'string' && u.id.trim() !== '').map((u) => ({ id: u.id }))
+          : [];
 
         return {
           groupId: validGroupId,
@@ -112,59 +117,74 @@ const Randomator = () => {
     saveGroupsToRandomatorFirebase(updatedGroups);
   };
 
-  if (loading) return <div className="text-white p-4">Načítání dat...</div>;
+  const groupedUserIds = groups.flatMap((g) => g.users.map((u) => u.id));
+  const ungroupedUsers = users.filter((u) => !groupedUserIds.includes(u.id));
+  const selectedOnly = users.filter((u) => selectedUsers.includes(u.id) && !groupedUserIds.includes(u.id));
+  const groupedUsers = users.filter((u) => groupedUserIds.includes(u.id));
+
+  if (loading) return <div className="text-blue-600 p-4">Načítání dat...</div>;
 
   return (
-    <div className="w-full min-h-screen bg-transparent text-gray-800">
-      <div className="max-w-[1000px] mx-auto flex flex-col items-center pt-[100px]">
-        <h1 className="text-3xl font-bold mb-6">Randomator</h1>
+    <div className="w-full min-h-screen bg-[#e9f0fb] text-gray-800 py-20">
+      <div className="max-w-6xl mx-auto px-6 flex flex-col items-center">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-6">Randomator</h1>
         <UserInput addUser={addUser} />
-        <h2 className="text-2xl mb-4">Hráči</h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full px-4">
-          <AnimatePresence>
-            {users.map((user) => {
-              const isInGroup = groups.some((g) => g.users.some((u) => u.id === user.id));
-              const isSelected = selectedUsers.includes(user.id);
+        <div className="w-full grid md:grid-cols-3 gap-6 mt-10">
+          {/* Nepřiřazení hráči */}
+          <div className="bg-green-100 border border-green-400 rounded-lg p-4 shadow">
+            <h2 className="text-lg font-bold text-green-800 mb-2">Nepřiřazení hráči</h2>
+            {ungroupedUsers.map((user) => (
+              <label
+                key={user.id}
+                className={`block p-2 rounded cursor-pointer hover:bg-green-200 ${
+                  selectedUsers.includes(user.id) ? 'bg-gray-300' : ''
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedUsers.includes(user.id)}
+                  onChange={() => selectUser(user.id)}
+                  className="mr-2"
+                />
+                {user.nickname}
+              </label>
+            ))}
+          </div>
 
-              let bgClass = 'hover:bg-gray-800';
-              if (isInGroup) {
-                bgClass = 'bg-[#FC3A1E] text-black';
-              } else if (!isSelected) {
-                bgClass = 'bg-[#9CFF99] text-black';
-              }
+          {/* Vybraní hráči */}
+          <div className="bg-gray-100 border border-gray-400 rounded-lg p-4 shadow">
+            <h2 className="text-lg font-bold text-gray-800 mb-2">Vybraní hráči</h2>
+            {selectedOnly.length > 0 ? (
+              selectedOnly.map((user) => (
+                <div key={user.id} className="p-2 bg-gray-200 rounded mb-1">
+                  {user.nickname}
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-600">Žádní vybraní hráči</p>
+            )}
+          </div>
 
-              return (
-                <motion.label
-                  key={user.id}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
-                  className={`flex items-center justify-between border border-gray-600 rounded px-4 py-2 cursor-pointer transition ${bgClass}`}
-                  htmlFor={`user-${user.id}`}>
-                  <div className="flex items-center ">
-                    <input id={`user-${user.id}`} type="checkbox" checked={isSelected || isInGroup} onChange={() => selectUser(user.id)} className="mr-3 cursor-pointer" />
-                    <span className="text-sm md:text-lg">{user.nickname}</span>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (window.confirm('Opravdu chceš smazat tohoto hráče?')) {
-                        handleDeleteUser(user.id);
-                      }
-                    }}
-                    className="text-red-500 hover:text-red-700 text-xl"
-                    title="Smazat hráče">
-                    🗑️
-                  </button>
-                </motion.label>
-              );
-            })}
-          </AnimatePresence>
+          {/* Přiřazení hráči */}
+          <div className="bg-red-100 border border-red-400 rounded-lg p-4 shadow">
+            <h2 className="text-lg font-bold text-red-800 mb-2">Přiřazení hráči</h2>
+            {groupedUsers.length > 0 ? (
+              groupedUsers.map((user) => (
+                <div key={user.id} className="p-2 bg-red-200 rounded mb-1 cursor-not-allowed opacity-70">
+                  {user.nickname}
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-red-600">Žádní přiřazení hráči</p>
+            )}
+          </div>
         </div>
 
-        <button onClick={divideIntoGroups} className="text-white border-2 w-64 group px-6 py-3 my-6 flex items-center justify-center hover:bg-pink-600 hover:border-pink-600">
+        <button
+          onClick={divideIntoGroups}
+          className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-10"
+        >
           Rozděl do skupiny
         </button>
 
