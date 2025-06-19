@@ -118,7 +118,7 @@ const Randomator = () => {
   const selectedOnly = users.filter((u) => selectedUsers.includes(u.id) && !groupedUserIds.includes(u.id));
   const groupedUsers = users.filter((u) => groupedUserIds.includes(u.id));
 
-  if (loading) return <div className="text-blue-600 p-4">Načítání dat...</div>;
+  if (loading) return <div className="text-blue-600 mt-20 p-4">Načítání dat...</div>;
 
   return (
     <div className="w-full min-h-screen bg-[#e9f0fb] text-gray-800 py-20">
