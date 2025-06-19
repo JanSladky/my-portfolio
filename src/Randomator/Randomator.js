@@ -115,7 +115,7 @@ const Randomator = () => {
   if (loading) return <div className="text-white p-4">Načítání dat...</div>;
 
   return (
-    <div className="w-full min-h-screen bg-[#0a192f] text-gray-300">
+    <div className="w-full min-h-screen bg-transparent text-gray-800">
       <div className="max-w-[1000px] mx-auto flex flex-col items-center pt-[100px]">
         <h1 className="text-3xl font-bold mb-6">Randomator</h1>
         <UserInput addUser={addUser} />
