@@ -19,9 +19,8 @@ const Navbar = ({ nav, handleClick }) => {
         {[
           { href: '/', label: 'Domů' },
           { href: '/about', label: 'O mně' },
-          { href: '/cv', label: 'Životopis' },
-          { href: '/skills', label: 'Skills' },
-          { href: '/work', label: 'Projekty' },
+          { href: '/developer', label: 'Developer' },
+          { href: '/work', label: 'Reference' },
           { href: '/contact', label: 'Kontakt' },
         ].map(({ href, label }) => (
           <li key={href}>
@@ -42,9 +41,8 @@ const Navbar = ({ nav, handleClick }) => {
         {[
           { href: '/', label: 'Domů' },
           { href: '/about', label: 'O mně' },
-          { href: '/cv', label: 'Životopis' },
-          { href: '/skills', label: 'Skills' },
-          { href: '/work', label: 'Projekty' },
+          { href: '/developer', label: 'Developer' },
+          { href: '/work', label: 'Reference' },
           { href: '/contact', label: 'Kontakt' },
         ].map(({ href, label }) => (
           <li key={href} className="py-6 text-3xl">
@@ -55,7 +53,7 @@ const Navbar = ({ nav, handleClick }) => {
         ))}
       </ul>
 
-     <SocialSidebar />
+      <SocialSidebar />
     </div>
   );
 };
