@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { addUserToRandomatorFirebase, saveGroupsToRandomatorFirebase, deleteUserFromFirebase, subscribeToUsers, getGroupsFromRandomatorFirebase } from '../../firebase';
+import { addUserToRandomatorFirebase, saveGroupsToRandomatorFirebase, deleteUserFromFirebase, subscribeToUsers, getGroupsFromRandomatorFirebase, renameUserInRandomatorFirebase } from '../../firebase';
 
 import UserInput from './UserInput';
 import GroupDisplay from './GroupDisplay';
@@ -89,7 +89,13 @@ const Randomator = () => {
       console.error('Chyba při mazání uživatele:', err);
     }
   };
-
+  const renameUser = async (id, newNickname) => {
+    try {
+      await renameUserInRandomatorFirebase(id, newNickname);
+    } catch (err) {
+      console.error('Chyba při přejmenování hráče:', err);
+    }
+  };
   const handleDeleteGroup = async (groupId) => {
     const updatedGroups = groups
       .filter((group) => group.groupId !== groupId)

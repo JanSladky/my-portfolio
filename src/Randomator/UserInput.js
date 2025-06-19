@@ -12,18 +12,9 @@ const UserInput = ({ addUser }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center">
-      <input
-        type="text"
-        value={nickname}
-        onChange={(e) => setNickname(e.target.value)}
-        placeholder="Nickname"
-        className="p-2 rounded h-10 mb-4"
-      />
-      <button
-        type="submit"
-        className="text-white cursor-pointer border-2 w-64 group px-2 py-2 my-2 flex items-center justify-center hover:bg-pink-600 hover:border-pink-600"
-      >
+    <form onSubmit={handleSubmit} className="flex flex-col items-center mb-8">
+      <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Nickname" className="p-2 rounded h-10 mb-4 shadow-md w-64 text-center" />
+      <button type="submit" className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition">
         Přidat hráče
       </button>
     </form>

@@ -1,16 +1,6 @@
 // Import Firebase funkcí
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  setDoc,
-  getDocs,
-  serverTimestamp
-} from "firebase/firestore";
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, setDoc, getDocs, serverTimestamp } from 'firebase/firestore';
 
 // Použití environmentálních proměnných v Next.js
 const firebaseConfig = {
@@ -89,6 +79,18 @@ export const deleteUserFromFirebase = async (id) => {
     console.error('Error deleting user: ', e);
   }
 };
+// 🔤 Změna jména uživatele
+export const renameUserInRandomatorFirebase = async (id, newNickname) => {
+  try {
+    const userRef = doc(db, 'randomatorUsers', id);
+    await updateDoc(userRef, {
+      nickname: newNickname,
+    });
+    console.log(`Uživatel ${id} byl přejmenován na ${newNickname}`);
+  } catch (e) {
+    console.error('Chyba při přejmenování uživatele: ', e);
+  }
+};
 
 //
 // 💾 SKUPINY
@@ -105,10 +107,7 @@ export const saveGroupsToRandomatorFirebase = async (groups) => {
 
     // ✅ Uložíme nové skupiny s vlastním groupId jako ID dokumentu
     const savePromises = groups.map(async (group) => {
-      if (
-        !group.groupId ||
-        !Array.isArray(group.users)
-      ) return;
+      if (!group.groupId || !Array.isArray(group.users)) return;
 
       const groupDocRef = doc(groupsRef, String(group.groupId));
       await setDoc(groupDocRef, {
