@@ -56,7 +56,8 @@ const Work = () => {
         transition={{ duration: 0.6 }}
       >
         <div className="pb-4">
-          <h2 className="text-4xl font-bold text-gray-800 inline border-b-4 border-blue-500 pb-1">Projekty</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">Reference</h2>
+          <div className="h-1 w-24 bg-blue-400 rounded-full mb-6"></div>
           <p className="pt-4 text-slate-600">// Projekty které jsem naprogramoval</p>
         </div>
 
