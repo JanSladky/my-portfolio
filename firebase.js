@@ -1,6 +1,6 @@
 // Import Firebase funkcí
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, setDoc, getDocs, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, setDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 // Použití environmentálních proměnných v Next.js
 const firebaseConfig = {
