@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  addUserToRandomatorFirebase,
-  saveGroupsToRandomatorFirebase,
-  deleteUserFromFirebase,
-  subscribeToUsers,
-  getGroupsFromRandomatorFirebase,
-} from '../../firebase';
+import { addUserToRandomatorFirebase, saveGroupsToRandomatorFirebase, deleteUserFromFirebase, subscribeToUsers, getGroupsFromRandomatorFirebase } from '../../firebase';
 
 import UserInput from './UserInput';
 import GroupDisplay from './GroupDisplay';
@@ -46,9 +40,7 @@ const Randomator = () => {
   };
 
   const selectUser = (id) => {
-    setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
-    );
+    setSelectedUsers((prev) => (prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]));
   };
 
   const divideIntoGroups = async () => {
@@ -103,9 +95,7 @@ const Randomator = () => {
       .filter((group) => group.groupId !== groupId)
       .map((group) => {
         const validGroupId = group.groupId !== undefined ? group.groupId : Date.now();
-        const validUsers = Array.isArray(group.users)
-          ? group.users.filter((u) => u && typeof u.id === 'string' && u.id.trim() !== '').map((u) => ({ id: u.id }))
-          : [];
+        const validUsers = Array.isArray(group.users) ? group.users.filter((u) => u && typeof u.id === 'string' && u.id.trim() !== '').map((u) => ({ id: u.id })) : [];
 
         return {
           groupId: validGroupId,
@@ -135,20 +125,31 @@ const Randomator = () => {
           <div className="bg-green-100 border border-green-400 rounded-lg p-4 shadow">
             <h2 className="text-lg font-bold text-green-800 mb-2">Nepřiřazení hráči</h2>
             {ungroupedUsers.map((user) => (
-              <label
-                key={user.id}
-                className={`block p-2 rounded cursor-pointer hover:bg-green-200 ${
-                  selectedUsers.includes(user.id) ? 'bg-gray-300' : ''
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedUsers.includes(user.id)}
-                  onChange={() => selectUser(user.id)}
-                  className="mr-2"
-                />
-                {user.nickname}
-              </label>
+              <div key={user.id} className={`flex items-center justify-between p-2 rounded hover:bg-green-200 ${selectedUsers.includes(user.id) ? 'bg-gray-300' : ''}`}>
+                <label className="flex items-center cursor-pointer">
+                  <input type="checkbox" checked={selectedUsers.includes(user.id)} onChange={() => selectUser(user.id)} className="mr-2" />
+                  <span>{user.nickname}</span>
+                </label>
+                <div className="flex gap-2 ml-4">
+                  <button
+                    onClick={() => {
+                      const newName = prompt('Zadej nové jméno hráče:', user.nickname);
+                      if (newName && newName.trim() !== '') renameUser(user.id, newName.trim());
+                    }}
+                    className="text-blue-500 hover:text-blue-700 text-sm"
+                    title="Přejmenovat hráče">
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Opravdu chceš smazat tohoto hráče?')) handleDeleteUser(user.id);
+                    }}
+                    className="text-red-500 hover:text-red-700 text-sm"
+                    title="Smazat hráče">
+                    🗑️
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
 
@@ -181,10 +182,7 @@ const Randomator = () => {
           </div>
         </div>
 
-        <button
-          onClick={divideIntoGroups}
-          className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-10"
-        >
+        <button onClick={divideIntoGroups} className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-10">
           Rozděl do skupiny
         </button>
 
