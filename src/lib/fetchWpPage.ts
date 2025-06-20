@@ -1,7 +1,5 @@
 export async function fetchWpPage(slug: string) {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_WORDPRESS_API_BASE ||
-    'https://primary-production-c9043.up.railway.app/wp-json';
+  const baseUrl = process.env.NEXT_PUBLIC_WORDPRESS_API_BASE || 'https://wp.jansladky.eu/wp-json';
 
   try {
     // Krok 1: Získat ID stránky podle slugu
@@ -31,10 +29,9 @@ export async function fetchWpPage(slug: string) {
       id: pageId,
       title: page.title?.rendered,
       content: page.content?.rendered,
-      acf: acfData.acf || {}
+      acf: acfData.acf || {},
     };
-
-  } catch (error: any) {
+  } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
       console.error(`❌ Chyba při načítání stránky '${slug}':`, error.message);
     }
