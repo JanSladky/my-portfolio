@@ -1,6 +1,4 @@
 import { FaBars, FaTimes, FaGithub, FaLinkedin } from 'react-icons/fa';
-import { HiOutlineMail } from 'react-icons/hi';
-import { BsFillPersonLinesFill } from 'react-icons/bs';
 import Link from 'next/link';
 import Image from 'next/image';
 import SocialSidebar from '../components/SocialSidebar';

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, ReactNode } from 'react';
-import { HiArrowNarrowRight } from 'react-icons/hi';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { fetchWpPage } from '../lib/fetchWpPage';
