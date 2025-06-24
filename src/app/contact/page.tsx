@@ -175,8 +175,8 @@ export default function ContactForm() {
 
           <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!} onChange={(token) => setRecaptchaToken(token)} ref={recaptchaRef} />
 
-          <button type="submit" className="bg-indigo-100 text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-indigo-200 transition">
-            Odeslat
+          <button type="submit" className="btn-glass btn-primary-light">
+            <span className="btn-primary-inner">Odeslat</span>
           </button>
           {status && <p className="text-sm text-blue-500 mt-2">{status}</p>}
         </form>
