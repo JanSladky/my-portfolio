@@ -10,14 +10,14 @@ const projects = [
     type: 'web',
     image: '/pohanka.png',
     title: 'Webové stránky pro kosmetické studio',
-    link: '/work/1',
+    link: 'https://www.kosmetikapohanka.cz',
   },
   {
     id: 2,
     type: 'web',
     image: '/videojinak.png',
     title: 'Webové stránky pro videojinak',
-    link: '/work/2',
+    link: 'https://www.videojinak.cz',
   },
   {
     id: 3,
@@ -31,14 +31,14 @@ const projects = [
     type: 'app',
     image: '/zasedacka.png',
     title: 'Plánovač událostí zasedací místnosti',
-    link: '/work/4',
+    link: 'https://zasedacka-display-demo.vercel.app/',
   },
   {
     id: 5,
     type: 'app',
     image: '/recepty.png',
     title: 'Aplikace na recepty',
-    link: '/work/5',
+    link: 'https://recepty-app.vercel.app/',
   },
 ];
 
