@@ -31,12 +31,6 @@ export default function SocialSidebar({ variant = 'sidebar' }: Props) {
       icon: <HiOutlineMail className="text-teal-600" size={24} />,
       bg: 'bg-teal-100',
     },
-    {
-      label: 'Životopis',
-      href: '/cv',
-      icon: <BsFillPersonLinesFill className="text-gray-600" size={24} />,
-      bg: 'bg-gray-100',
-    },
   ];
 
   if (variant === 'inline') {
@@ -64,7 +58,7 @@ export default function SocialSidebar({ variant = 'sidebar' }: Props) {
         {items.map(({ label, href, icon, bg }, i) => (
           <li
             key={i}
-            className={`group w-[180px] h-[60px] pl-4 pr-2 flex justify-between items-center ml-[-150px] hover:ml-[-10px] duration-300 ${bg} rounded-r-2xl shadow-md hover:scale-105 transition-transform`}
+            className={`group w-[200px] h-[60px] pl-4 pr-2 flex justify-between items-center ml-[-150px] hover:ml-[-10px] duration-500 ${bg} rounded-r-2xl shadow-md hover:scale-105 transition-all`}
           >
             {href.startsWith('http') ? (
               <a
