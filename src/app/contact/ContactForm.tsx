@@ -3,7 +3,6 @@
 import { useState, useRef, FormEvent, ChangeEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-
 export default function ContactForm() {
   const [activeTab, setActiveTab] = useState<'client' | 'company'>('client');
   const [formClient, setFormClient] = useState({
@@ -70,12 +69,11 @@ export default function ContactForm() {
   return (
     <>
       {/* Záložky */}
-      
       <div className="flex mb-6 space-x-2">
-        <button onClick={() => setActiveTab('client')} className={`px-4 py-2 rounded-md font-semibold ${activeTab === 'client' ? 'bg-pink-600 text-white' : 'bg-[#112240] text-[#8892b0]'}`}>
+        <button onClick={() => setActiveTab('client')} className={`btn-glass px-4 py-2 rounded-md font-semibold transition ${activeTab === 'client' ? 'btn-primary-dark' : 'btn-primary-light'}`}>
           Poptávka na web
         </button>
-        <button onClick={() => setActiveTab('company')} className={`px-4 py-2 rounded-md font-semibold ${activeTab === 'company' ? 'bg-pink-600 text-white' : 'bg-[#112240] text-[#8892b0]'}`}>
+        <button onClick={() => setActiveTab('company')} className={`btn-glass px-4 py-2 rounded-md font-semibold transition ${activeTab === 'company' ? 'btn-primary-dark' : 'btn-primary-light'}`}>
           Spolupráce / Nabídka práce
         </button>
       </div>

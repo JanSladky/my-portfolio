@@ -60,12 +60,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen w-full pt-[120px] pb-20 bg-[#e9f0fb] text-[#1f2937] font-sans antialiased">
-      <motion.div
-        className="max-w-4xl mx-auto px-6"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      <motion.div className="max-w-4xl mx-auto px-6" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         {project ? (
           <>
             <div className="bg-white p-8 rounded-xl shadow-md mb-10">
@@ -82,16 +77,8 @@ export default function ProjectDetailPage() {
                   showThumbnails={true}
                   renderItem={(item) => (
                     <div className="image-gallery-image flex flex-col items-center bg-[#e9f0fb] rounded-xl shadow overflow-hidden">
-                      <img
-                        src={item.original}
-                        alt={item.description || 'Ukázka projektu'}
-                        className="object-contain max-h-[75vh] w-full rounded"
-                      />
-                      {item.description && (
-                        <div className="text-sm text-gray-700 bg-white bg-opacity-80 px-4 py-2 w-full text-center">
-                          {item.description}
-                        </div>
-                      )}
+                      <img src={item.original} alt={item.description || 'Ukázka projektu'} className="object-contain max-h-[75vh] w-full rounded" />
+                      {item.description && <div className="text-sm text-gray-700 bg-white bg-opacity-80 px-4 py-2 w-full text-center">{item.description}</div>}
                     </div>
                   )}
                 />
@@ -100,20 +87,20 @@ export default function ProjectDetailPage() {
 
             <div className="flex flex-wrap justify-center gap-4">
               <a href={project.demo} target="_blank" rel="noopener noreferrer">
-                <button className="bg-blue-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-blue-200 transition">
-                  Zobrazit demo
+                <button className="btn-glass btn-primary-light">
+                  <span className="btn-primary-inner">Zobrazit demo</span>{' '}
                 </button>
               </a>
               {project.source && (
                 <a href={project.source} target="_blank" rel="noopener noreferrer">
-                  <button className="bg-blue-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-blue-200 transition">
-                    Repozitář
+                  <button className="btn-glass btn-primary-light">
+                    <span className="btn-primary-inner">Repozitář</span>{' '}
                   </button>
                 </a>
               )}
               <Link href="/work">
-                <button className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition">
-                  Zpět na projekty
+                <button className="btn-glass btn-primary-light">
+                  <span className="btn-primary-inner">Zpět na projekty</span>
                 </button>
               </Link>
             </div>
@@ -122,9 +109,7 @@ export default function ProjectDetailPage() {
           <div className="text-center py-20">
             <h1 className="text-3xl font-bold text-red-500">Projekt nenalezen</h1>
             <Link href="/work">
-              <button className="mt-6 bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition">
-                Zpět na projekty
-              </button>
+              <button className="mt-6 bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition">Zpět na projekty</button>
             </Link>
           </div>
         )}

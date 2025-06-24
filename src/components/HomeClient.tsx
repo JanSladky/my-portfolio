@@ -64,8 +64,8 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
               const section = document.getElementById('cards');
               section?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition">
-            Zobrazit podrobnosti
+            className="btn-glass btn-primary-light">
+            <span className="btn-primary-inner">Zobrazit podrobnosti</span>
           </button>
         </div>
         <div className="absolute bottom-0 left-0 w-full">
@@ -93,21 +93,25 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
               image: pageData.acf.cms_image,
             },
           ].map(({ title, text, image }, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-md hover:shadow-xl transform hover:scale-[1.02] transition duration-300 p-6">
+            <div key={index} className="card-glass">
               <h2 className="text-xl font-bold text-blue-600 mb-2">{title}</h2>
               <p className="text-gray-700 leading-relaxed mb-4">{text}</p>
               {image?.url && <img src={image.url} alt={image.alt || 'Ilustrační obrázek'} className="rounded-md shadow w-full" />}
             </div>
           ))}
         </div>
-        <button
-          onClick={() => {
-            const section = document.getElementById('sluzby');
-            section?.scrollIntoView({ behavior: 'smooth' });
-          }}
-          className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-32 flex mx-auto">
-          Služby které nabízím
-        </button>
+        <div className="max-w-6xl mx-auto ">
+          {' '}
+          <button
+            onClick={() => {
+              const section = document.getElementById('sluzby');
+              section?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="btn-glass btn-primary-dark mt-10">
+            <span className="btn-primary-inner">Služby které nabízím</span>
+          </button>
+        </div>
+
         <div className="absolute bottom-0 left-0 w-full z-10">
           <SectionWave color="#e3edf9" variant="angle" />
         </div>
@@ -139,7 +143,7 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
                 items: ['Web s administrací', 'Správa článků, aktualit, fotogalerií, atd.', 'Vhodné pro firemní weby, spolky'],
               },
             ].map(({ icon, title, items }, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform hover:scale-105 p-6 relative overflow-hidden">
+              <div key={index} className="card-glass">
                 <div className="absolute top-0 left-0 w-full h-1 from-indigo-400 to-pink-400 rounded-t-2xl" />
                 <div className="text-blue-500 text-3xl mb-4">{icon}</div>
                 <h3 className="text-lg font-semibold text-blue-600 mb-4">{title}</h3>
@@ -152,14 +156,18 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
             ))}
           </div>
         </div>
-         <button
-          onClick={() => {
-            const section = document.getElementById('spoluprace');
-            section?.scrollIntoView({ behavior: 'smooth' });
-          }}
-          className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-32 flex mx-auto">
-          Spolupráce
-        </button>
+        <div className="max-w-6xl mx-auto px-6">
+          {' '}
+          <button
+            onClick={() => {
+              const section = document.getElementById('spoluprace');
+              section?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="btn-glass btn-primary-light mt-10">
+            <span className="btn-primary-inner">Spolupráce</span>
+          </button>
+        </div>
+
         <div className="absolute bottom-0 left-0 w-full z-10">
           <SectionWave color="#f4f7fc" variant="angle" />
         </div>
@@ -196,15 +204,17 @@ const HomeClient: React.FC<HomeProps> = ({ pageData: initialData }) => {
                 text: 'Předám zákazníkovi, projdeme finální podobu a případně zapracujeme finální požadavky',
               },
             ].map(({ icon, title, text }, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform hover:scale-105 p-6 text-left">
+              <div key={index} className="card-glass">
                 <div className="text-blue-500 text-3xl mx-auto mb-4">{icon}</div>
                 <h3 className="text-lg font-semibold text-blue-600 mb-2">{title}</h3>
                 <p className="text-gray-800 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
-          <Link className="bg-indigo-100 text-blue-600 font-semibold px-6 py-2 rounded-full hover:bg-indigo-200 transition mt-32 inline-flex mx-auto" href="/work">
-            Reference
+          <Link className="" href="/work">
+            <button className="btn-glass btn-primary-dark mt-10">
+              <span className="btn-primary-inner"> Reference</span>
+            </button>
           </Link>
         </div>
       </section>
