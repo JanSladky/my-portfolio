@@ -10,7 +10,7 @@ const projects = [
     type: 'web',
     image: '/pohanka.png',
     title: 'Webové stránky pro kosmetické studio',
-    link: 'https://www.kosmetikapohanka.cz',
+    link: '/work/1',
   },
   {
     id: 2,
