@@ -17,7 +17,7 @@ const projects = [
     type: 'web',
     image: '/videojinak.png',
     title: 'Webové stránky pro videojinak',
-    link: 'https://www.videojinak.cz',
+    link: '/work/2',
   },
   {
     id: 3,
@@ -31,14 +31,14 @@ const projects = [
     type: 'app',
     image: '/zasedacka.png',
     title: 'Plánovač událostí zasedací místnosti',
-    link: 'https://zasedacka-display-demo.vercel.app/',
+    link: '/work/4',
   },
   {
     id: 5,
     type: 'app',
     image: '/recepty.png',
     title: 'Aplikace na recepty',
-    link: 'https://recepty-app.vercel.app/',
+    link: '/work/5',
   },
 ];
 
