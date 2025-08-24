@@ -1,101 +1,107 @@
 // my-portfolio/frontend/src/lib/cachedPages.ts
-// ÚČEL: Bezpečně a tolerantně načíst jednu stránku (podle slugu) ze Strapi
-//       a držet ji v Next.js cache. Žádné ACF, žádné WP pozůstatky.
-//
-// POZNÁMKY PRO ZAČÁTEČNÍKA:
-// - import {...} from "next/cache": načítáme "unstable_cache" – Next umí kešovat
-//   výsledek funkce a řídit revalidaci.
-// - import { strapiFetch } ...: náš vlastní helper, který přidává base URL, hlavičky atd.
+// ÚČEL: Odolná cache pro libovolnou stránku ze Strapi podle slugu.
+// Vrací DTO sjednocené do tvaru { id, slug, title, content_html }.
+// - title: string (ne WP { rendered })
+// - content_html: string (HTML poskládané z RichText bloků)
 
 import { unstable_cache } from "next/cache";
 import { strapiFetch } from "./strapi";
+import { blocksToHtml } from "./blocksToHtml";
 
-// 1) TYP DAT, které chceme mít ve frontendu
+// ========== DTO, které bude používat UI ==========
 export type PageDTO = {
   id: number;
-  title: string;      // titulek stránky
-  slug: string;       // URL identifikátor (např. "about")
-  about_text: string; // náš dlouhý text z jednoho pole
+  slug: string;
+  title: string;
+  content_html: string; // <- DŮLEŽITÉ: sjednocený název pro HTML obsahu
 };
 
-// 2) Pomocná funkce: sjednotí objekt z různých tvarů odpovědi Strapi
-//    (v5 vrací { data: [{ id, attributes: {...} }] }, ale někdy se lidi trefí jiným mappingem).
-function unifyItem(item: any): PageDTO {
-  // "a" = attributes, když existují; jinak item (tolerantní)
-  const a = item?.attributes ?? item ?? {};
-
-  // Bezpečné přečtení polí – když některé chybí, doplníme prázdným stringem
-  const id = Number(item?.id ?? 0);
-  const title = typeof a.title === "string" ? a.title : "";
-  const slug  = typeof a.slug  === "string" ? a.slug  : "";
-  const about = typeof a.about_text === "string" ? a.about_text : "";
-
-  return {
-    id: Number.isFinite(id) ? id : 0,
-    title,
-    slug,
-    about_text: about,
-  };
+// Pomocné čtení hodnot z různých variant payloadu (content-only / attributes…)
+function pickAttributes(node: any): any {
+  return node?.attributes ? node.attributes : node;
 }
 
-// 3) Tvrdý fetch ze Strapi (bez vyhazování "Invalid page payload")
-//    a) Dotaz na /api/pages s filtrem podle slugu
-//    b) Tolerantní vytažení prvního záznamu
-//    c) Vypíšu si do konzole response, když jsem v developmentu (abychom viděli, co chodí)
+function pickTitle(a: any): string {
+  // preferované klíče
+  if (typeof a?.title === "string") return a.title;
+
+  // alternativy (kdyby ses přejmenoval)
+  if (typeof a?.heading === "string") return a.heading;
+  if (typeof a?.name === "string") return a.name;
+
+  return "";
+}
+
+function pickSlug(a: any): string {
+  if (typeof a?.slug === "string") return a.slug;
+  return "";
+}
+
+/**
+ * Najdi pole s obsahem (může se jmenovat různě) a vrať ho,
+ * blocksToHtml si poradí i s null/undefined/špatným tvarem.
+ */
+function pickContentBlocks(a: any): unknown {
+  return (
+    a?.content ??
+    a?.Content ??
+    a?.body ??
+    a?.rich_text ??
+    a?.richText ??
+    null
+  );
+}
+
+// Tvrdý fetch jedné stránky podle slugu; vyhodí chybu, když něco chybí
 async function fetchPageStrict(slug: string): Promise<PageDTO> {
-  const res = await strapiFetch<{ data: Array<any> }>({
+  const res = await strapiFetch<{ data: any[] }>({
     path: "/api/pages",
     query: {
       filters: { slug: { $eq: slug } },
-      // fields můžeme posílat, ale když si nejsi jistý verzí/konfigurací,
-      // klidně je vynecháme, ať to nic neodfiltruje:
-      // fields: ["title", "slug", "about_text"],
       pagination: { pageSize: 1 },
     },
-    next: { tags: ["pages", `page:${slug}`], revalidate: 600 }, // 10 minut
+    next: { tags: ["pages", `page:${slug}`], revalidate: 600 },
   });
 
-  // DEV LOG: uvidíš v terminálu přesně co dorazilo (pomáhá odhalit, když je jiné jméno pole)
-  if (process.env.NODE_ENV !== "production") {
-    // Pozor na objem – logujeme jen první položku:
-    const sample = Array.isArray(res?.data) ? res.data[0] : res?.data;
-    console.log("🔎 Strapi /api/pages sample for slug =", slug, sample);
-  }
+  const item = Array.isArray(res?.data) ? res.data[0] : undefined;
+  if (!item) throw new Error(`Page '${slug}' not found`);
 
-  // Vytáhni první záznam
-  const item = Array.isArray(res?.data) ? res.data[0] : res?.data;
-  if (!item) {
-    // Když nic není, vrať "prázdnou" PageDTO – stránka nahoře to ošetří hezkým fallbackem
-    return { id: 0, title: "", slug: "", about_text: "" };
-  }
+  const a = pickAttributes(item);
+  const title = pickTitle(a);
+  const s = pickSlug(a);
+  const html = blocksToHtml(pickContentBlocks(a)); // bezpečně vrátí string
 
-  // Sjednoť data
-  const dto = unifyItem(item);
+  if (!title) throw new Error("Invalid page payload: missing title");
 
-  // DODELAT: Když "title" z nějakého důvodu nedorazí, nespadneme:
-  // dáme bezpečný zástupný text. Tím eliminuju "Invalid page payload".
   return {
-    ...dto,
-    title: dto.title || "(bez názvu)",
+    id: Number(item?.id ?? 0) || 0,
+    slug: s || slug,
+    title,
+    content_html: html || "",
   };
 }
 
-// 4) Per‑slug cache obal – Next uloží výsledek a po 10 min revaliduje
+// Vytvoř „odolnou“ cached funkci pro každý slug
 const getCachedPageInner = (slug: string) =>
   unstable_cache(
-    async () => await fetchPageStrict(slug),
+    async () => {
+      return await fetchPageStrict(slug);
+    },
     ["page", slug],
     { revalidate: 600, tags: ["pages", `page:${slug}`] }
   );
 
-// 5) Veřejná funkce pro serverové komponenty
+/**
+ * Veřejná funkce: vrať poslední platná data (nepřepíše se prázdnem při výpadku).
+ * Když selže úplně poprvé (bez cache), vrátí null – UI zobrazí měkký fallback.
+ */
 export async function getCachedPage(slug: string): Promise<PageDTO | null> {
+  const cachedFn = getCachedPageInner(slug);
   try {
-    const dto = await getCachedPageInner(slug)();
-    return dto;
-  } catch (e: any) {
+    return await cachedFn();
+  } catch (e) {
     if (process.env.NODE_ENV !== "production") {
-      console.error("❌ getCachedPage failed:", e?.message || e);
+      console.error("❌ getCachedPage failed:", (e as any)?.message || e);
     }
     return null;
   }
