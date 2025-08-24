@@ -1,17 +1,34 @@
+# .github/workflows/strapi-transfer.yml
 name: Strapi Transfer (Local → Railway)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   transfer:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    defaults:
+      run:
+        working-directory: backend   # <- důležité: běž v /backend
 
-      - uses: actions/setup-node@v4
+    env:
+      # Strapi CLI očekává přesně tyto klíče:
+      STRAPI_TRANSFER_URL: ${{ secrets.STRAPI_TO_URL }}
+      STRAPI_TRANSFER_TOKEN: ${{ secrets.STRAPI_TO_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install deps (backend)
+        run: npm ci
 
       - name: Install Strapi CLI + pg
         run: |
@@ -19,11 +36,8 @@ jobs:
           npm i pg
 
       - name: Run transfer to Railway
-        env:
-          # pro jistotu – kdyby runner narazil na divný chain
-          NODE_TLS_REJECT_UNAUTHORIZED: "0"
         run: |
           npx strapi transfer \
-            --to "${{ secrets.STRAPI_TO_URL }}" \
-            --to-token "${{ secrets.STRAPI_TO_TOKEN }}" \
-            --force
+            --to "$STRAPI_TRANSFER_URL" \
+            --to-token "$STRAPI_TRANSFER_TOKEN" \
+            --yes --force
