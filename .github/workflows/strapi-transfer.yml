@@ -1,13 +1,11 @@
 name: transfer
+
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: {}    # spouštíš ručně v Actions
 
 jobs:
   push_to_railway:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
 
     steps:
       - name: Checkout repo
@@ -21,36 +19,30 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install backend deps
+        working-directory: ./backend
         run: |
           npm ci
           npm i pg --save
 
       - name: Run transfer to Railway
+        working-directory: ./backend
         env:
-          NODE_ENV: production
+          # Strapi app keys (MUSÍ být stejné jako v tvém backend .env)
+          APP_KEYS: ${{ secrets.APP_KEYS }}
 
-          # Strapi secrets (tvé skutečné názvy)
-          APP_KEYS:             ${{ secrets.APP_KEYS }}
-          API_TOKEN_SALT:       ${{ secrets.API_TOKEN_SALT }}
-          ADMIN_JWT_SECRET:     ${{ secrets.ADMIN_JWT_SECRET }}
-          TRANSFER_TOKEN_SALT:  ${{ secrets.TRANSFER_TOKEN_SALT }}
+          # Připojení na Railway Postgres (tajné hodnoty dej do GitHub Secrets)
+          DATABASE_CLIENT: ${{ secrets.DATABASE_CLIENT }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_SSL: ${{ secrets.DATABASE_SSL }}
+          DATABASE_SSL_REJECT_UNAUTHORIZED: ${{ secrets.DATABASE_SSL_REJECT_UNAUTHORIZED }}
 
-          # Zdrojová DB (Railway) – odkud CLI čte data
-          DATABASE_CLIENT:      ${{ secrets.DATABASE_CLIENT }}
-          DATABASE_HOST:        ${{ secrets.DATABASE_HOST }}
-          DATABASE_PORT:        ${{ secrets.DATABASE_PORT }}
-          DATABASE_NAME:        ${{ secrets.DATABASE_NAME }}
-          DATABASE_USERNAME:    ${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD:    ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_SSL:         ${{ secrets.DATABASE_SSL }}
-
-          # Cíl transferu (produkční Strapi)
-          STRAPI_TRANSFER_URL:   ${{ secrets.STRAPI_TRANSFER_URL }}
+          # Cíl transferu (production Strapi)
+          STRAPI_TRANSFER_URL: ${{ secrets.STRAPI_TRANSFER_URL }}
           STRAPI_TRANSFER_TOKEN: ${{ secrets.STRAPI_TRANSFER_TOKEN }}
-
-          # pokud by se vracel SELF_SIGNED_CERT_IN_CHAIN:
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-
         run: |
           npx strapi transfer \
             --to "$STRAPI_TRANSFER_URL" \
