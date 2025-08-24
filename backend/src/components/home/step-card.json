@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_home_step_cards",
+  "info": {
+    "displayName": "StepCard"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "text": {
+      "type": "text"
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": [
+        "handshake",
+        "ruler",
+        "comments",
+        "bug",
+        "plane"
+      ]
+    }
+  },
+  "config": {}
+}

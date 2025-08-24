@@ -1,0 +1,83 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap');
+
+@layer base {
+  html,
+  body {
+    @apply text-gray-300 min-h-screen;
+  }
+  html,
+  body {
+    font-family: 'Raleway', sans-serif;
+    background-color: #e9f0fb;
+    min-height: 100vh;
+    overflow-x: hidden; /* ❗ Zabraní horizontálnímu skrolování */
+    overflow-y: auto; /* Místo 'scroll' použij 'auto', aby scrollbar nebyl vidět, když není potřeba */
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+  #__next {
+    height: 100%; /* Next.js root kontejner */
+  }
+  li {
+    @apply px-4;
+    @apply cursor-pointer;
+  }
+  .content-div {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 250px;
+  }
+  .content-div:hover {
+    background-image: linear-gradient(to right, rgba(122, 157, 255, 0.8), hsla(242, 74%, 61%, 0.8%)) !important;
+  }
+  .app-container {
+    min-height: var(--app-height); /* Správné řešení pro výšku */
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Navbar */
+  .navbar {
+    svg {
+      cursor: pointer;
+    }
+  }
+}
+
+/* Styl karet */
+.card-glass {
+  @apply bg-white/30 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.05)] transition-transform hover:scale-105;
+}
+/* Base glass effect bez barvy */
+.btn-glass {
+  @apply rounded-lg backdrop-blur-lg shadow-md border border-white/20
+    hover:scale-105 active:scale-95
+    transition duration-200 ease-in-out transform-gpu;
+}
+
+.btn-primary-light {
+  @apply bg-blue-100/60 text-blue-800
+    hover:bg-blue-200/70 border border-transparent shadow-md;
+}
+
+.btn-primary-dark {
+  @apply bg-blue-200 text-blue-900
+    hover:bg-blue-100/70 border border-white/30 shadow-md;
+}
+
+/* Vnitřní text + padding */
+.btn-primary-inner {
+  @apply inline-flex items-center justify-center
+    px-6 py-2 text-blue-700 font-semibold transition-none;
+}
+
+.tab-btn-glass {
+  @apply rounded-lg backdrop-blur-lg shadow-md border border-white/20
+    transition duration-200 ease-in-out transform-gpu;
+}

@@ -1,0 +1,103 @@
+{
+  "kind": "singleType",
+  "collectionName": "homes",
+  "info": {
+    "singularName": "home",
+    "pluralName": "homes",
+    "displayName": "Home"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "home_intro": {
+      "type": "string"
+    },
+    "home_name": {
+      "type": "string"
+    },
+    "home_subtitle": {
+      "type": "string"
+    },
+    "home_description": {
+      "type": "text"
+    },
+    "home_button_text": {
+      "type": "string"
+    },
+    "cards_heading": {
+      "type": "string"
+    },
+    "tech_title": {
+      "type": "string"
+    },
+    "tech_text": {
+      "type": "text"
+    },
+    "tech_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "responzivita_title": {
+      "type": "string"
+    },
+    "responzivita_text": {
+      "type": "text"
+    },
+    "responzivita_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "cms_title": {
+      "type": "string"
+    },
+    "cms_text": {
+      "type": "text"
+    },
+    "cms_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "services_heading": {
+      "type": "string"
+    },
+    "services": {
+      "type": "component",
+      "component": "home.service-card",
+      "repeatable": true
+    },
+    "services_button_text": {
+      "type": "string"
+    },
+    "collaboration_heading": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "component",
+      "component": "home.step-card",
+      "repeatable": true
+    },
+    "collaboration_button_text": {
+      "type": "string"
+    }
+  }
+}
