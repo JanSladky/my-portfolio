@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_cv_education_items",
+  "info": {
+    "displayName": "EducationItem"
+  },
+  "options": {},
+  "attributes": {
+    "edu_date": {
+      "type": "string"
+    },
+    "edu_school": {
+      "type": "string"
+    },
+    "edu_description": {
+      "type": "text"
+    }
+  },
+  "config": {}
+}

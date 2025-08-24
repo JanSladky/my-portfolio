@@ -27,8 +27,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+    
   },
   "eslintConfig": {
     "extends": [

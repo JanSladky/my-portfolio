@@ -399,6 +399,46 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiDeveloperDeveloper extends Struct.SingleTypeSchema {
+  collectionName: 'developers';
+  info: {
+    displayName: 'Developer';
+    pluralName: 'developers';
+    singularName: 'developer';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    cv_birth_date: Schema.Attribute.String;
+    cv_mail: Schema.Attribute.String;
+    cv_name: Schema.Attribute.String;
+    cv_section_title: Schema.Attribute.String;
+    cv_tel_number: Schema.Attribute.String;
+    cv_title: Schema.Attribute.String;
+    education_experiences: Schema.Attribute.Component<
+      'cv.education-item',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::developer.developer'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    work_experiences: Schema.Attribute.Component<'cv.cv-work-item', true>;
+    work_section_title: Schema.Attribute.String;
+  };
+}
+
 export interface ApiHomeHome extends Struct.SingleTypeSchema {
   collectionName: 'homes';
   info: {
@@ -987,6 +1027,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
+      'api::developer.developer': ApiDeveloperDeveloper;
       'api::home.home': ApiHomeHome;
       'api::page.page': ApiPagePage;
       'plugin::content-releases.release': PluginContentReleasesRelease;

@@ -1,5 +1,30 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface CvCvWorkItem extends Struct.ComponentSchema {
+  collectionName: 'components_cv_cv_work_items';
+  info: {
+    displayName: 'CvWorkItem';
+  };
+  attributes: {
+    company: Schema.Attribute.String;
+    date: Schema.Attribute.String;
+    description: Schema.Attribute.String;
+    position: Schema.Attribute.String;
+  };
+}
+
+export interface CvEducationItem extends Struct.ComponentSchema {
+  collectionName: 'components_cv_education_items';
+  info: {
+    displayName: 'EducationItem';
+  };
+  attributes: {
+    edu_date: Schema.Attribute.String;
+    edu_description: Schema.Attribute.Text;
+    edu_school: Schema.Attribute.String;
+  };
+}
+
 export interface HomeBullet extends Struct.ComponentSchema {
   collectionName: 'components_home_bullets';
   info: {
@@ -39,6 +64,8 @@ export interface HomeStepCard extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'cv.cv-work-item': CvCvWorkItem;
+      'cv.education-item': CvEducationItem;
       'home.bullet': HomeBullet;
       'home.service-card': HomeServiceCard;
       'home.step-card': HomeStepCard;

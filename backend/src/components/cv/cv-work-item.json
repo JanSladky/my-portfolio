@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_cv_cv_work_items",
+  "info": {
+    "displayName": "CvWorkItem"
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "string"
+    },
+    "company": {
+      "type": "string"
+    },
+    "position": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

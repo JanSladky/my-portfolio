@@ -1,46 +1,19 @@
 // my-portfolio/frontend/src/lib/cachedPages.ts
-// ÚČEL: Odolná cache pro libovolnou stránku ze Strapi podle slugu.
-// Vrací DTO sjednocené do tvaru { id, slug, title, content_html }.
-// - title: string (ne WP { rendered })
-// - content_html: string (HTML poskládané z RichText bloků)
+// Odolná cache pro „stránky“ z Strapi (kolekce "pages").
+// Drží poslední platná data a nikdy je nepřepíše prázdnem při výpadku backendu.
 
 import { unstable_cache } from "next/cache";
 import { strapiFetch } from "./strapi";
 import { blocksToHtml } from "./blocksToHtml";
 
-// ========== DTO, které bude používat UI ==========
 export type PageDTO = {
   id: number;
   slug: string;
   title: string;
-  content_html: string; // <- DŮLEŽITÉ: sjednocený název pro HTML obsahu
+  content_html: string; // HTML vyrenderované z RichText bloků
 };
 
-// Pomocné čtení hodnot z různých variant payloadu (content-only / attributes…)
-function pickAttributes(node: any): any {
-  return node?.attributes ? node.attributes : node;
-}
-
-function pickTitle(a: any): string {
-  // preferované klíče
-  if (typeof a?.title === "string") return a.title;
-
-  // alternativy (kdyby ses přejmenoval)
-  if (typeof a?.heading === "string") return a.heading;
-  if (typeof a?.name === "string") return a.name;
-
-  return "";
-}
-
-function pickSlug(a: any): string {
-  if (typeof a?.slug === "string") return a.slug;
-  return "";
-}
-
-/**
- * Najdi pole s obsahem (může se jmenovat různě) a vrať ho,
- * blocksToHtml si poradí i s null/undefined/špatným tvarem.
- */
+// Pomocné: bezpečně vyzvedni content z různě pojmenovaných polí (content, body, rich_text…)
 function pickContentBlocks(a: any): unknown {
   return (
     a?.content ??
@@ -52,36 +25,41 @@ function pickContentBlocks(a: any): unknown {
   );
 }
 
-// Tvrdý fetch jedné stránky podle slugu; vyhodí chybu, když něco chybí
+// „Tvrdý“ fetch z Strapi – když selže, vyhodí chybu (cache se tím pádem NEpřepíše prázdnem)
 async function fetchPageStrict(slug: string): Promise<PageDTO> {
-  const res = await strapiFetch<{ data: any[] }>({
+  const res = await strapiFetch<{ data: Array<any> }>({
     path: "/api/pages",
     query: {
       filters: { slug: { $eq: slug } },
-      pagination: { pageSize: 1 },
+      pagination: { pageSize: 1 }
     },
-    next: { tags: ["pages", `page:${slug}`], revalidate: 600 },
+    next: {
+      tags: ["pages", `page:${slug}`],
+      revalidate: 600 // 10 min
+    }
   });
 
-  const item = Array.isArray(res?.data) ? res.data[0] : undefined;
-  if (!item) throw new Error(`Page '${slug}' not found`);
+  const item = res?.data?.[0];
+  if (!item) {
+    throw new Error(`Page '${slug}' not found`);
+  }
 
-  const a = pickAttributes(item);
-  const title = pickTitle(a);
-  const s = pickSlug(a);
-  const html = blocksToHtml(pickContentBlocks(a)); // bezpečně vrátí string
+  const a = item?.attributes ?? {};
+  const blocks = pickContentBlocks(a);
+  const html = blocksToHtml(blocks);
 
-  if (!title) throw new Error("Invalid page payload: missing title");
-
-  return {
-    id: Number(item?.id ?? 0) || 0,
-    slug: s || slug,
-    title,
-    content_html: html || "",
+  const dto: PageDTO = {
+    id: Number(item.id) || 0,
+    slug: String(a.slug ?? ""),
+    title: String(a.title ?? ""),
+    content_html: html || ""
   };
+
+  if (!dto.title) throw new Error("Invalid page payload: missing title");
+  return dto;
 }
 
-// Vytvoř „odolnou“ cached funkci pro každý slug
+// Cache wrapper – žádné React hooky, jen Next.js server cache
 const getCachedPageInner = (slug: string) =>
   unstable_cache(
     async () => {
@@ -91,18 +69,13 @@ const getCachedPageInner = (slug: string) =>
     { revalidate: 600, tags: ["pages", `page:${slug}`] }
   );
 
-/**
- * Veřejná funkce: vrať poslední platná data (nepřepíše se prázdnem při výpadku).
- * Když selže úplně poprvé (bez cache), vrátí null – UI zobrazí měkký fallback.
- */
+// Veřejná funkce pro serverové komponenty
 export async function getCachedPage(slug: string): Promise<PageDTO | null> {
   const cachedFn = getCachedPageInner(slug);
   try {
     return await cachedFn();
   } catch (e) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error("❌ getCachedPage failed:", (e as any)?.message || e);
-    }
+    // první build + výpadek → vrať null (UI ukáže „měkký“ fallback)
     return null;
   }
 }

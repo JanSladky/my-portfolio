@@ -1,0 +1,29 @@
+name: Strapi Transfer (Local → Railway)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Strapi CLI + pg
+        run: |
+          npm i -g @strapi/strapi
+          npm i pg
+
+      - name: Run transfer to Railway
+        env:
+          # pro jistotu – kdyby runner narazil na divný chain
+          NODE_TLS_REJECT_UNAUTHORIZED: "0"
+        run: |
+          npx strapi transfer \
+            --to "${{ secrets.STRAPI_TO_URL }}" \
+            --to-token "${{ secrets.STRAPI_TO_TOKEN }}" \
+            --force
