@@ -6,6 +6,9 @@ on:
 jobs:
   push_to_railway:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
 
     steps:
       - name: Checkout repo
@@ -19,17 +22,15 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install backend deps
-        working-directory: ./backend                  # <<< důležité
         run: |
-          npm ci                                      # nainstaluje závislosti
-          npm i pg --save                             # jistota pro Postgres
+          npm ci
+          npm i pg --save   # jistota pro Postgres
 
       - name: Run transfer to Railway
-        working-directory: ./backend                  # <<< důležité
         env:
-          STRAPI_TRANSFER_URL: ${{ secrets.STRAPI_TO_URL }}
-          STRAPI_TRANSFER_TOKEN: ${{ secrets.STRAPI_TO_TOKEN }}
-          NODE_TLS_REJECT_UNAUTHORIZED: 0             # obejití “self‑signed cert”
+          STRAPI_TRANSFER_URL: ${{ secrets.STRAPI_TRANSFER_URL }}
+          STRAPI_TRANSFER_TOKEN: ${{ secrets.STRAPI_TRANSFER_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0  # obejde SELF_SIGNED_CERT_IN_CHAIN
         run: |
           npx strapi transfer \
             --to "$STRAPI_TRANSFER_URL" \
