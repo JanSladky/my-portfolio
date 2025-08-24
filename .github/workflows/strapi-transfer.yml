@@ -1,32 +1,37 @@
 name: transfer
 
 on:
-  workflow_dispatch: # spouštění ručně v GitHub UI
+  workflow_dispatch: {}   # spustíš ručně v Actions
 
 jobs:
-  transfer:
+  push_to_railway:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Use Node 18
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
-      - name: Install Strapi CLI + pg
+      - name: Install backend deps
+        working-directory: ./backend                  # <<< důležité
         run: |
-          cd backend
-          npm install pg --save
-          npm install @strapi/strapi -g
+          npm ci                                      # nainstaluje závislosti
+          npm i pg --save                             # jistota pro Postgres
 
       - name: Run transfer to Railway
-        working-directory: ./backend   # <<< klíčová změna
+        working-directory: ./backend                  # <<< důležité
         env:
           STRAPI_TRANSFER_URL: ${{ secrets.STRAPI_TO_URL }}
           STRAPI_TRANSFER_TOKEN: ${{ secrets.STRAPI_TO_TOKEN }}
-          NODE_TLS_REJECT_UNAUTHORIZED: 0   # obejití cert chyby
+          NODE_TLS_REJECT_UNAUTHORIZED: 0             # obejití “self‑signed cert”
         run: |
-          npx strapi transfer --to $STRAPI_TRANSFER_URL --to-token $STRAPI_TRANSFER_TOKEN --force
+          npx strapi transfer \
+            --to "$STRAPI_TRANSFER_URL" \
+            --to-token "$STRAPI_TRANSFER_TOKEN" \
+            --force
