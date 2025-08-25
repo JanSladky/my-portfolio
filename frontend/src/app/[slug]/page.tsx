@@ -7,8 +7,11 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   return [];
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const data = await getCachedPage(params.slug);
+export default async function Page(
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params;          // 👈 Next 15: params je Promise
+  const data = await getCachedPage(slug);
 
   if (!data) {
     return (

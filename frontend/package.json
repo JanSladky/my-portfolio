@@ -31,7 +31,6 @@
     "typecheck": "tsc --noEmit",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-    
   },
   "eslintConfig": {
     "extends": [
@@ -56,6 +55,7 @@
     "@types/react": "^18.3.23",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
+    "eslint-config-next": "^15.5.0",
     "eslint-config-react-app": "^7.0.1",
     "postcss": "^8.5.3",
     "postcss-import": "^16.1.0",
