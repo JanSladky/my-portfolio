@@ -1,9 +1,9 @@
 // src/lib/cachedDeveloper.ts
-import { unstable_cache } from "next/cache";
-import { strapiFetch } from "./strapi";
+import { unstable_cache } from 'next/cache';
+import { strapiFetch } from './strapi';
 
 // Cache: v devu 1 s (prakticky bez cache), v prod 10 min
-const CACHE_SECONDS = process.env.NODE_ENV === "development" ? 1 : 600;
+const CACHE_SECONDS = process.env.NODE_ENV === 'development' ? 1 : 600;
 
 export type WorkItem = {
   date?: string;
@@ -43,53 +43,49 @@ function unify(input: any): DeveloperDTO {
   return {
     id: Number(data.id ?? 0) || 0,
 
-    cv_section_title: a?.cv_section_title ?? "",
-    cv_name: a?.cv_name ?? "",
-    cv_birth_date: a?.cv_birth_date ?? "",
-    cv_mail: a?.cv_mail ?? "",
-    cv_tel_number: a?.cv_tel_number ?? "",
+    cv_section_title: a?.cv_section_title ?? '',
+    cv_name: a?.cv_name ?? '',
+    cv_birth_date: a?.cv_birth_date ?? '',
+    cv_mail: a?.cv_mail ?? '',
+    cv_tel_number: a?.cv_tel_number ?? '',
 
-    work_section_title: a?.work_section_title ?? "Pracovní zkušenosti",
+    work_section_title: a?.work_section_title ?? 'Pracovní zkušenosti',
     work_experiences: work.map((w: any) => ({
-      date: w?.date ?? "",
-      company: w?.company ?? "",
-      position: w?.position ?? "",
-      description: w?.description ?? "",
+      date: w?.date ?? '',
+      company: w?.company ?? '',
+      position: w?.position ?? '',
+      description: w?.description ?? '',
     })),
 
-    education_section_title: a?.education_section_title ?? "Vzdělání",
+    education_section_title: a?.education_section_title ?? 'Vzdělání',
     education_experiences: edu.map((e: any) => ({
-      edu_date: e?.edu_date ?? "",
-      edu_school: e?.edu_school ?? "",
-      edu_description: e?.edu_description ?? "",
+      edu_date: e?.edu_date ?? '',
+      edu_school: e?.edu_school ?? '',
+      edu_description: e?.edu_description ?? '',
     })),
   };
 }
 
 async function fetchDeveloperStrict(): Promise<DeveloperDTO> {
   const res = await strapiFetch<{ data: any }>({
-    path: "/api/developer",
-    next: { tags: ["developer"], revalidate: CACHE_SECONDS },
+    path: '/api/developer' + '?populate[work_experiences][populate]=*' + '&populate[education_experiences][populate]=*',
+    next: { tags: ['developer'], revalidate: CACHE_SECONDS },
   });
 
-  if (process.env.NODE_ENV !== "production") {
-    console.log("🔎 /api/developer sample:", res?.data ?? res);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🔎 /api/developer sample:', res?.data ?? res);
   }
   return unify(res);
 }
 
-const getCachedDeveloperInner = unstable_cache(
-  async () => await fetchDeveloperStrict(),
-  ["developer"],
-  { revalidate: CACHE_SECONDS, tags: ["developer"] }
-);
+const getCachedDeveloperInner = unstable_cache(async () => await fetchDeveloperStrict(), ['developer'], { revalidate: CACHE_SECONDS, tags: ['developer'] });
 
 export async function getCachedDeveloper(): Promise<DeveloperDTO | null> {
   try {
     return await getCachedDeveloperInner();
-  } catch (e: any) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error("❌ getCachedDeveloper failed:", e?.message || e);
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('❌ getCachedDeveloper failed:', e?.message || e);
     }
     return null;
   }

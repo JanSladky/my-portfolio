@@ -24,6 +24,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
+    "clean": "rm -rf .next .turbo node_modules",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
