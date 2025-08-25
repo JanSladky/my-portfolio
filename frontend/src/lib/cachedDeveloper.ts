@@ -19,6 +19,7 @@ export type EducationItem = {
 };
 
 export type DeveloperDTO = {
+  title?: string;
   id: number;
   cv_section_title?: string;
   cv_name?: string;
@@ -42,7 +43,7 @@ function unify(input: any): DeveloperDTO {
 
   return {
     id: Number(data.id ?? 0) || 0,
-
+    title: a?.title ?? '',
     cv_section_title: a?.cv_section_title ?? '',
     cv_name: a?.cv_name ?? '',
     cv_birth_date: a?.cv_birth_date ?? '',
