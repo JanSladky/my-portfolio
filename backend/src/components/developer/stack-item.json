@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_developer_stack_items",
+  "info": {
+    "displayName": "StackItem",
+    "description": "Položka do sekce Můj dev stack (ikona + popisek)"
+  },
+  "options": {},
+  "attributes": {
+    "icon": {
+      "type": "enumeration",
+      "enum": [
+        "html",
+        "css",
+        "sass",
+        "js",
+        "react",
+        "firebase",
+        "github",
+        "gitlab",
+        "tailwind",
+        "nextjs",
+        "bootstrap",
+        "vercel"
+      ],
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "config": {}
+}
