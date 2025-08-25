@@ -6,89 +6,38 @@
     "pluralName": "developers",
     "displayName": "Developer"
   },
-  "options": {
-    "draftAndPublish": true
-  },
+  "options": { "draftAndPublish": true },
   "pluginOptions": {},
   "attributes": {
-    "title": {
-      "type": "string"
-    },
-    "cv_name": {
-      "type": "string"
-    },
-    "cv_birth_date": {
-      "type": "string"
-    },
-    "cv_mail": {
-      "type": "string"
-    },
-    "cv_tel_number": {
-      "type": "string"
-    },
-    "cv_title": {
-      "type": "string"
-    },
+    "title": { "type": "string" },
+
+    "cv_name": { "type": "string" },
+    "cv_birth_date": { "type": "string" },
+    "cv_mail": { "type": "string" },
+    "cv_tel_number": { "type": "string" },
+    "cv_title": { "type": "string" },
+
+    "cv_section_title": { "type": "string" },
+    "work_section_title": { "type": "string" },
+
     "work_experiences": {
       "type": "component",
       "component": "cv.cv-work-item",
       "repeatable": true
     },
-    "cv_section_title": {
-      "type": "string"
-    },
-    "work_section_title": {
-      "type": "string"
-    },
+
+    "education_section_title": { "type": "string" },
     "education_experiences": {
       "type": "component",
       "component": "cv.education-item",
       "repeatable": true
     },
 
-    "kind": "singleType",
-    "collectionName": "developers",
-    "info": {
-      "singularName": "developer",
-      "pluralName": "developers",
-      "displayName": "Developer"
-    },
-    "options": {
-      "draftAndPublish": true
-    },
-    "pluginOptions": {},
-    "attributes": {
-      "title": { "type": "string" },
-
-      "cv_name": { "type": "string" },
-      "cv_birth_date": { "type": "string" },
-      "cv_mail": { "type": "string" },
-      "cv_tel_number": { "type": "string" },
-
-      "cv_section_title": { "type": "string" },
-      "work_section_title": { "type": "string" },
-
-      "work_experiences": {
-        "type": "component",
-        "component": "cv.cv-work-item",
-        "repeatable": true
-      },
-
-      "education_section_title": { "type": "string" },
-      "education_experiences": {
-        "type": "component",
-        "component": "cv.education-item",
-        "repeatable": true
-      },
-
-      "stack_section_title": {
-        "type": "string"
-      },
-      "stack_items": {
-        "type": "component",
-        "repeatable": true,
-        "component": "developer.stack-item"
-      }
+    "stack_section_title": { "type": "string" },
+    "stack_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "developer.stack-item"
     }
   }
 }
