@@ -1,12 +1,13 @@
-// backend/config/plugins.ts
-export default () => ({
+export default ({ env }) => ({
   upload: {
     config: {
       provider: 'local',
-      providerOptions: {},               // držíme prázdné, ať má Strapi očekávaný tvar
-      sizeLimit: 50 * 1024 * 1024,       // 50 MB / soubor
-      breakpoints: null,                 // bez automatických variant
-      // baseUrl zde NEDÁVAT – Strapi použije server.url
+      sizeLimit: 50 * 1024 * 1024, // 50 MB / soubor
+      // !!! Důležité: breakpoints nenechávej null.
+      // Buď to smaž, nebo nech prázdný objekt:
+      breakpoints: {},
+
+      // žádný baseUrl – Strapi použije server.url (PUBLIC_URL)
     },
   },
 });
