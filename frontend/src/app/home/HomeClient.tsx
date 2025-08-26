@@ -1,4 +1,3 @@
-// frontend/src/app/home/HomeClient.tsx
 'use client';
 
 /**
@@ -8,7 +7,7 @@
  * - Spolupráce: kroky podle enum `icon` (handshake|ruler|comments|bug|plane)
  */
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import SectionWave from '../../components/SectionWave';
@@ -55,10 +54,41 @@ export default function HomeClient({ data }: { data?: HomeData }) {
   }, []);
 
   const T = (s?: string) => (s && s.trim().length ? s : '');
-  const abs = (u?: string) => (u ? (u.startsWith('http') ? u : `${process.env.NEXT_PUBLIC_STRAPI_URL || ''}${u}`) : '');
+
+  /**
+   * ABSOLUTIZACE URL:
+   * - Pokud `u` už je absolutní (začíná na http/https), vrátíme ji.
+   * - Pokud je relativní (např. "/uploads/a.png"), použijeme `new URL(u, BASE)`.
+   * - BASE bereme z NEXT_PUBLIC_STRAPI_URL (musí být bez trailing slash).
+   * - `try/catch` chrání před neplatnými vstupy, ať nám to nespadne v klientu.
+   */
+  const ABS_BASE = useMemo(() => (process.env.NEXT_PUBLIC_STRAPI_URL || '').replace(/\/+$/, ''), []);
+  const abs = (u?: string) => {
+    if (!u) return '';
+    try {
+      // Pokud je `u` už absolutní, new URL(u) projde a vrátíme ji.
+      // Pokud je relativní, new URL(u, ABS_BASE) správně slepí "https://strapi... + /uploads/..."
+      return new URL(u, ABS_BASE || undefined).href;
+    } catch {
+      // Když by `u` bylo třeba "blob:..." nebo něco nestandardního, vrátíme původní.
+      return u;
+    }
+  };
+
+  // Volitelná dev diagnostika: když BASE chybí a máme relativní obrázek, ukaž varování.
+  const showBaseWarning =
+    process.env.NODE_ENV !== 'production' &&
+    !ABS_BASE &&
+    [h.tech_image?.url, h.responzivita_image?.url, h.cms_image?.url].some((u) => typeof u === 'string' && u.startsWith('/'));
 
   return (
     <div id="home" style={{ overflow: 'hidden' }} className="w-full pt-[80px] text-[#1f2937]">
+      {showBaseWarning && (
+        <div className="mx-auto my-4 max-w-6xl rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+          Chybí <code>NEXT_PUBLIC_STRAPI_URL</code>. Relativní obrázky zůstanou na doméně frontendu a nebudou vidět.
+        </div>
+      )}
+
       {/* HERO */}
       <motion.div
         style={{ backgroundColor: '#e9f0fb' }}
@@ -116,7 +146,7 @@ export default function HomeClient({ data }: { data?: HomeData }) {
             {T(h.services_heading) || 'Co mohu nabídnout'}
           </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
             {(h.services || []).map((service, index) => {
               const Icon = service.icon && iconMap[service.icon as IconName];
               return (
@@ -154,7 +184,7 @@ export default function HomeClient({ data }: { data?: HomeData }) {
             {T(h.collaboration_heading) || 'Jak probíhá spolupráce'}
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
             {(h.steps || []).map((step, index) => {
               const SIcon = step.icon && stepIconMap[step.icon as StepIconName];
               return (
