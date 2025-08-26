@@ -423,6 +423,7 @@ export interface ApiDeveloperDeveloper extends Struct.SingleTypeSchema {
       'cv.education-item',
       true
     >;
+    education_section_title: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -430,6 +431,8 @@ export interface ApiDeveloperDeveloper extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    stack_items: Schema.Attribute.Component<'developer.stack-item', true>;
+    stack_section_title: Schema.Attribute.String;
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

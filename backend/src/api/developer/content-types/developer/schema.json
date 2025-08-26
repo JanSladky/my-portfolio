@@ -6,7 +6,9 @@
     "pluralName": "developers",
     "displayName": "Developer"
   },
-  "options": { "draftAndPublish": true },
+  "options": {
+    "draftAndPublish": true
+  },
   "pluginOptions": {},
   "attributes": {
     "title": { "type": "string" },

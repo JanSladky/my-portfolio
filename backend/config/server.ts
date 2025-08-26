@@ -1,7 +1,9 @@
+// backend/config/server.ts
 export default ({ env }) => ({
-  host: env('HOST', '0.0.0.0'),
+  host: '0.0.0.0',
   port: env.int('PORT', 1337),
-  app: {
-    keys: env.array('APP_KEYS'),
-  },
+  url: env('PUBLIC_URL'),        // např. https://strapi-production-d581.up.railway.app (bez koncového /)
+  proxy: true,                   // za proxy (Railway)
+  app: { keys: env.array('APP_KEYS') },
+  logger: { level: env('STRAPI_LOG_LEVEL', 'info') },
 });

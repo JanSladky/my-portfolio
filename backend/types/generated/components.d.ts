@@ -25,6 +25,34 @@ export interface CvEducationItem extends Struct.ComponentSchema {
   };
 }
 
+export interface DeveloperStackItem extends Struct.ComponentSchema {
+  collectionName: 'components_developer_stack_items';
+  info: {
+    description: 'Polo\u017Eka do sekce M\u016Fj dev stack (ikona + popisek)';
+    displayName: 'StackItem';
+  };
+  attributes: {
+    icon: Schema.Attribute.Enumeration<
+      [
+        'html',
+        'css',
+        'sass',
+        'js',
+        'react',
+        'firebase',
+        'github',
+        'gitlab',
+        'tailwind',
+        'nextjs',
+        'bootstrap',
+        'vercel',
+      ]
+    > &
+      Schema.Attribute.Required;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface HomeBullet extends Struct.ComponentSchema {
   collectionName: 'components_home_bullets';
   info: {
@@ -66,6 +94,7 @@ declare module '@strapi/strapi' {
     export interface ComponentSchemas {
       'cv.cv-work-item': CvCvWorkItem;
       'cv.education-item': CvEducationItem;
+      'developer.stack-item': DeveloperStackItem;
       'home.bullet': HomeBullet;
       'home.service-card': HomeServiceCard;
       'home.step-card': HomeStepCard;
