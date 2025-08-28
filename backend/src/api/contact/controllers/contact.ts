@@ -51,7 +51,7 @@ const userHtml = (b: any) => {
 };
 
 export default factories.createCoreController(
-  'api::contact-submission.contact-submission' as any, // 👈 ukecání UID pro TS
+  'api::contact-submission.contact-submission' as any,
   ({ strapi }) => ({
     async submit(ctx) {
       const b = (ctx.request as any).body || {};
@@ -64,18 +64,40 @@ export default factories.createCoreController(
         return ctx.badRequest('Missing reCAPTCHA token');
       }
 
-      // 2) ověření reCAPTCHA
+      // 2) ověření reCAPTCHA — DETAILNÍ LOGY (dočasně)
       const secret = process.env.RECAPTCHA_SECRET_KEY || '';
-      const resp: any = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(b.recaptchaToken)}`
-      })
-        .then(r => r.json())
-        .catch(() => ({}));
+      if (!secret) {
+        strapi.log.error('RECAPTCHA_SECRET_KEY is empty/undefined on server');
+        return ctx.forbidden('reCAPTCHA server secret is missing');
+      }
 
-      if (!resp?.success) {
-        return ctx.forbidden('reCAPTCHA failed');
+      const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+      const params = new URLSearchParams({
+        secret,
+        response: String(b.reCAPTCHAToken || b.recaptchaToken || ''),
+        remoteip: (ctx as any).ip || '',
+      });
+
+      let verifyJson: any = null;
+      try {
+        const r = await fetch(verifyUrl, {
+          method: 'POST',
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          body: params,
+        });
+        verifyJson = await r.json();
+      } catch (e) {
+        strapi.log.error('reCAPTCHA fetch error:', e);
+        return ctx.forbidden('reCAPTCHA request failed');
+      }
+
+      strapi.log.info('reCAPTCHA verify response:', verifyJson);
+
+      if (!verifyJson?.success) {
+        const codes = Array.isArray(verifyJson?.['error-codes'])
+          ? verifyJson['error-codes'].join(',')
+          : '';
+        return ctx.forbidden(`reCAPTCHA failed${codes ? `: ${codes}` : ''}`);
       }
 
       // 3) uložení do DB
@@ -90,7 +112,7 @@ export default factories.createCoreController(
         tech_stack: b.tech_stack || null,
         message: b.message || null,
         ip: (ctx as any).ip,
-        user_agent: ctx.request.headers['user-agent'] || ''
+        user_agent: ctx.request.headers['user-agent'] || '',
       };
 
       await (strapi.entityService as any).create(
@@ -98,31 +120,40 @@ export default factories.createCoreController(
         { data: dataToSave }
       );
 
-      // 4) e-maily přes nodemailer (plugin není potřeba)
+      // 4) e-maily přes nodemailer
       const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
         port: Number(process.env.EMAIL_PORT || 465),
         secure: String(process.env.EMAIL_SECURE) !== 'false',
-        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
       });
 
       const adminTo = process.env.EMAIL_TO || process.env.EMAIL_USER;
       const from = process.env.EMAIL_FROM || process.env.EMAIL_USER;
 
-      await transporter.sendMail({
-        from,
-        to: adminTo,
-        replyTo: b.email,
-        subject: b.type === 'company' ? 'Nabídka spolupráce' : 'Nová poptávka na web',
-        html: adminHtml(b)
-      });
+      try {
+        await transporter.sendMail({
+          from,
+          to: adminTo,
+          replyTo: b.email,
+          subject: b.type === 'company' ? 'Nabídka spolupráce' : 'Nová poptávka na web',
+          html: adminHtml(b),
+        });
+      } catch (e) {
+        strapi.log.error('sendMail admin failed:', e);
+        // necháme pokračovat – už máme uložené v DB
+      }
 
-      await transporter.sendMail({
-        from,
-        to: b.email,
-        subject: b.type === 'company' ? 'Děkujeme za nabídku spolupráce' : 'Vaše poptávka byla přijata',
-        html: userHtml(b)
-      });
+      try {
+        await transporter.sendMail({
+          from,
+          to: b.email,
+          subject: b.type === 'company' ? 'Děkujeme za nabídku spolupráce' : 'Vaše poptávka byla přijata',
+          html: userHtml(b),
+        });
+      } catch (e) {
+        strapi.log.error('sendMail user failed:', e);
+      }
 
       ctx.send({ ok: true });
     },
