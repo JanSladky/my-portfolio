@@ -1,30 +1,31 @@
-// frontend/src/app/work/work-client.tsx
 'use client';
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import type { ReferenceItem } from '../../lib/cachedReferences';
 
-// 1) Základ absolutní URL na Strapi z env a helper na složení plné cesty k obrázku
+// Absolutní base URL na Strapi (bez trailing /)
 const ABS_BASE = (process.env.NEXT_PUBLIC_STRAPI_URL || '').replace(/\/+$/, '');
 const abs = (u?: string) => {
   if (!u) return '';
   try { return new URL(u, ABS_BASE || undefined).href; } catch { return u; }
 };
 
-export default function WorkClient({ items }: { items: ReferenceItem[] }) {
-  // 2) Přepínání záložek (web/app)
-  const [activeTab, setActiveTab] = useState<'web' | 'app'>('web');
+// 1×1 průhledný PNG jako univerzální blur placeholder
+const TINY_BLUR =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
 
-  // 3) Filtrované položky podle aktivní záložky (memo kvůli výkonu)
+export default function WorkClient({ items }: { items: ReferenceItem[] }) {
+  const [activeTab, setActiveTab] = useState<'web' | 'app'>('web');
   const filtered = useMemo(() => items.filter(i => i.type === activeTab), [items, activeTab]);
 
   return (
     <div id="work" className="w-full min-h-screen bg-[#e9f0fb] text-[#1f2937] pt-[120px] pb-[60px] font-sans antialiased">
       <motion.div
-        className="max-w-6xl mx-auto px-6 flex flex-col justify-center w-full h-full transition-opacity"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}
+        className="max-w-6xl mx-auto px-6 flex flex-col justify-center w-full h-full"
+        initial={false} // ❗ žádné zhasnutí celé stránky při mountu
       >
         {/* Nadpis + podtitulek */}
         <div className="pb-4">
@@ -54,14 +55,30 @@ export default function WorkClient({ items }: { items: ReferenceItem[] }) {
           {filtered.map((proj) => {
             const src = abs(proj.cover?.url);
             return (
-              <div key={proj.id} className="flex flex-col rounded-xl overflow-hidden shadow-md bg-white hover:shadow-xl transition duration-300 min-h-[340px]">
-                {/* Obrázek */}
-                <div className="w-full h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
-                  {src ? (
-                    <img src={src} alt={proj.cover?.alt || proj.title || 'Cover'} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-sm text-gray-400">Bez náhledu</span>
-                  )}
+              <div
+                key={proj.id}
+                className="flex flex-col rounded-xl overflow-hidden shadow-md bg-white hover:shadow-xl transition duration-300 min-h-[340px] will-change-transform"
+              >
+                {/* Obrázek – stabilní layout pomocí aspect ratio */}
+                <div className="w-full bg-gray-100 overflow-hidden">
+                  <div className="relative w-full aspect-[16/9]">
+                    {src ? (
+                      <Image
+                        src={src}
+                        alt={proj.cover?.alt || proj.title || 'Cover'}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        placeholder="blur"
+                        blurDataURL={TINY_BLUR}
+                        className="object-cover"
+                        priority={false}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-400">
+                        Bez náhledu
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Text + tlačítko */}

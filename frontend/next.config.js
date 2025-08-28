@@ -1,9 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  images: {
+    remotePatterns: [
+      // DEV – Strapi lokálně
+      { protocol: 'http', hostname: 'localhost', port: '1337' },
+      // PROD – Strapi na Railway
+      { protocol: 'https', hostname: 'strapi-production-d581.up.railway.app' },
+    ],
+  },
+
   env: {
-    NEXT_PUBLIC_WORDPRESS_API: 'https://primary-production-c9043.up.railway.app/wp-json/wp/v2/pages',
-    MYSQL_URL: 'mysql://root:bSmBqCloVohsUEIlOWwSlCwYayZKDRHe@nozomi.proxy.rlwy.net:38994/railway',
+    // používej to v klientu na skládání absolutních URL
+    NEXT_PUBLIC_STRAPI_URL: process.env.NODE_ENV === 'development'
+      ? 'http://localhost:1337'
+      : 'https://strapi-production-d581.up.railway.app',
   },
 };
 
