@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contact_submissions",
+  "info": {
+    "singularName": "contact-submission",
+    "pluralName": "contact-submissions",
+    "displayName": "Contact Submission",
+    "description": "Odeslané poptávky a nabídky spolupráce"
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "type": { "type": "enumeration", "enum": ["client", "company"], "required": true },
+    "name": { "type": "string" },
+    "company": { "type": "string" },
+    "email": { "type": "email", "required": true },
+    "phone": { "type": "string" },
+    "website_type": { "type": "string" },
+    "website": { "type": "string" },
+    "tech_stack": { "type": "text" },
+    "message": { "type": "text" },
+    "ip": { "type": "string" },
+    "user_agent": { "type": "text" }
+  }
+}

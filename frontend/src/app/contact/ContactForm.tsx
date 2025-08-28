@@ -1,10 +1,15 @@
+// src/app/contact/ContactForm.tsx
 'use client';
 
 import { useState, useRef, FormEvent, ChangeEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { postToStrapi } from '../../lib/strapiClient';
+
+type Tab = 'client' | 'company';
 
 export default function ContactForm() {
-  const [activeTab, setActiveTab] = useState<'client' | 'company'>('client');
+  const [activeTab, setActiveTab] = useState<Tab>('client');
+
   const [formClient, setFormClient] = useState({
     name: '',
     email: '',
@@ -12,6 +17,7 @@ export default function ContactForm() {
     website_type: '',
     message: '',
   });
+
   const [formCompany, setFormCompany] = useState({
     company: '',
     email: '',
@@ -20,17 +26,19 @@ export default function ContactForm() {
     tech_stack: '',
     message: '',
   });
+
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [status, setStatus] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, isCompany = false) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    isCompany = false
+  ) => {
     const { name, value } = e.target;
-    if (isCompany) {
-      setFormCompany((prev) => ({ ...prev, [name]: value }));
-    } else {
-      setFormClient((prev) => ({ ...prev, [name]: value }));
-    }
+    if (isCompany) setFormCompany((p) => ({ ...p, [name]: value }));
+    else setFormClient((p) => ({ ...p, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -40,46 +48,50 @@ export default function ContactForm() {
       return;
     }
 
+    setIsSubmitting(true);
     setStatus('⏳ Odesílám...');
 
-    const payload = activeTab === 'client' ? { ...formClient, recaptchaToken, type: 'client' } : { ...formCompany, recaptchaToken, type: 'company' };
+    const payload =
+      activeTab === 'client'
+        ? { ...formClient, recaptchaToken, type: 'client' as const }
+        : { ...formCompany, recaptchaToken, type: 'company' as const };
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      await postToStrapi('/api/contact/submit', payload);
 
-      if (res.ok) {
-        setStatus('✅ Zpráva byla úspěšně odeslána.');
-        setFormClient({ name: '', email: '', phone: '', website_type: '', message: '' });
-        setFormCompany({ company: '', email: '', phone: '', website: '', tech_stack: '', message: '' });
-        setRecaptchaToken(null);
-        recaptchaRef.current?.reset();
-      } else {
-        setStatus('❌ Došlo k chybě při odesílání.');
-      }
-    } catch (err) {
+      setStatus('✅ Zpráva byla úspěšně odeslána.');
+      setFormClient({ name: '', email: '', phone: '', website_type: '', message: '' });
+      setFormCompany({ company: '', email: '', phone: '', website: '', tech_stack: '', message: '' });
+      setRecaptchaToken(null);
+      recaptchaRef.current?.reset();
+    } catch (err: any) {
       console.error(err);
-      setStatus('❌ Chyba při odesílání.');
+      setStatus(`❌ Došlo k chybě při odesílání: ${err?.message || 'Neznámá chyba'}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <>
       {/* Záložky */}
-      <div className="flex mb-6 space-x-2">
-        <button onClick={() => setActiveTab('client')} className={`btn-glass px-4 py-2 rounded-md font-semibold transition ${activeTab === 'client' ? 'btn-primary-dark' : 'btn-primary-light'}`}>
-          Poptávka na web
+      <div className="flex justify-center mb-8 gap-4">
+        <button
+          onClick={() => setActiveTab('client')}
+          className={`btn-glass font-semibold ${activeTab === 'client' ? 'tab-btn-glass' : 'btn-primary-light'}`}
+        >
+          <span className="btn-primary-inner">Poptávka na web</span>
         </button>
-        <button onClick={() => setActiveTab('company')} className={`btn-glass px-4 py-2 rounded-md font-semibold transition ${activeTab === 'company' ? 'btn-primary-dark' : 'btn-primary-light'}`}>
-          Spolupráce / Nabídka práce
+        <button
+          onClick={() => setActiveTab('company')}
+          className={`btn-glass font-semibold ${activeTab === 'company' ? 'tab-btn-glass' : 'btn-primary-light'}`}
+        >
+          <span className="btn-primary-inner">Spolupráce / Nabídka práce</span>
         </button>
       </div>
 
       {/* Formulář */}
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
         {activeTab === 'client' ? (
           <>
             <input
@@ -88,7 +100,7 @@ export default function ContactForm() {
               value={formClient.name}
               onChange={handleChange}
               required
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
             <input
               name="email"
@@ -97,7 +109,7 @@ export default function ContactForm() {
               value={formClient.email}
               onChange={handleChange}
               required
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
             <input
               name="phone"
@@ -106,29 +118,39 @@ export default function ContactForm() {
               value={formClient.phone}
               onChange={handleChange}
               required
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
-            <fieldset className="border border-gray-600 rounded-md p-4">
-              <legend className="text-pink-500 font-semibold">Typ webu</legend>
+
+            <fieldset className="border border-gray-300 rounded-lg p-4">
+              <legend className="text-blue-600 font-semibold">Typ webu</legend>
               {[
                 'Jednoduchý prezentační web bez redakčního systému',
                 'Vícestránkový web bez redakčního systému',
                 'Jednostránkový prezentační web s redakčním systémem',
                 'Vícestránkový web s redakčním systémem',
               ].map((option) => (
-                <label key={option} className="block text-[#8892b0] mt-2 cursor-pointer">
-                  <input type="radio" name="website_type" value={option} checked={formClient.website_type === option} onChange={handleChange} className="mr-2 accent-pink-600" required />
+                <label key={option} className="block text-gray-700 mt-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="website_type"
+                    value={option}
+                    checked={formClient.website_type === option}
+                    onChange={handleChange}
+                    className="mr-2 accent-blue-600"
+                    required
+                  />
                   {option}
                 </label>
               ))}
             </fieldset>
+
             <textarea
               name="message"
               placeholder="Doplňující zpráva"
               value={formClient.message}
               onChange={handleChange}
               rows={5}
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
           </>
         ) : (
@@ -139,7 +161,7 @@ export default function ContactForm() {
               value={formCompany.company}
               onChange={(e) => handleChange(e, true)}
               required
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
             <input
               name="email"
@@ -148,7 +170,7 @@ export default function ContactForm() {
               value={formCompany.email}
               onChange={(e) => handleChange(e, true)}
               required
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
             <input
               name="phone"
@@ -157,7 +179,7 @@ export default function ContactForm() {
               value={formCompany.phone}
               onChange={(e) => handleChange(e, true)}
               required
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
             <input
               name="website"
@@ -165,14 +187,14 @@ export default function ContactForm() {
               placeholder="Web firmy"
               value={formCompany.website}
               onChange={(e) => handleChange(e, true)}
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
             <input
               name="tech_stack"
               placeholder="Technologie (např. React, PHP, Node.js)"
               value={formCompany.tech_stack}
               onChange={(e) => handleChange(e, true)}
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
             <textarea
               name="message"
@@ -180,18 +202,26 @@ export default function ContactForm() {
               value={formCompany.message}
               onChange={(e) => handleChange(e, true)}
               rows={5}
-              className="p-3 rounded-md bg-[#112240] text-[#ccd6f6] border border-gray-600 focus:outline-none focus:border-pink-600"
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-800 focus:outline-none focus:border-blue-500"
             />
           </>
         )}
 
-        <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!} onChange={(token) => setRecaptchaToken(token)} ref={recaptchaRef} />
+        <ReCAPTCHA
+          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+          onChange={(token) => setRecaptchaToken(token)}
+          ref={recaptchaRef}
+        />
 
-        <button type="submit" className="bg-pink-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-pink-700 transition">
-          Odeslat
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn-glass btn-primary-light disabled:opacity-60"
+        >
+          <span className="btn-primary-inner">{isSubmitting ? 'Odesílám…' : 'Odeslat'}</span>
         </button>
 
-        {status && <p className="text-sm text-pink-400 mt-2">{status}</p>}
+        {status && <p className="text-sm text-blue-500 mt-2">{status}</p>}
       </form>
     </>
   );

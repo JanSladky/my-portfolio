@@ -1,3 +1,4 @@
+// backend/config/middlewares.ts
 export default [
   'strapi::logger',
   'strapi::errors',
@@ -18,13 +19,24 @@ export default [
   {
     name: 'strapi::cors',
     config: {
-      enabled: true,
       origin: [
-        'https://jansladky.eu',          // tvoje hlavní doména
-        'https://www.jansladky.eu',      // pokud používáš i www
-        'https://admin.jansladky.eu',    // pokud uděláš subdoménu
-        'https://strapi-production-d581.up.railway.app', // fallback
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://jansladky.eu',
+        'https://www.jansladky.eu',
+        'https://admin.jansladky.eu',
+        'https://strapi-production-d581.up.railway.app',
       ],
+      headers: [
+        'Content-Type',
+        'Authorization',
+        'Origin',
+        'Accept',
+        'X-Requested-With'
+      ],
+      methods: ['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS'],
+      credentials: true,
+      keepHeaderOnError: true,
     },
   },
   'strapi::poweredBy',
